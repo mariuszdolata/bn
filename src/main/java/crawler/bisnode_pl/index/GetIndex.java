@@ -283,7 +283,7 @@ public class GetIndex implements Scrape {
 	 * @see crawler.bisnode_pl.index.Scrape#insertDataEntity(java.lang.Object)
 	 */
 	public void insertDataEntity(Object o) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		entityManager.getTransaction().begin();
@@ -300,7 +300,7 @@ public class GetIndex implements Scrape {
 	 * @see crawler.bisnode_pl.index.Scrape#insertDataListEntity(java.util.List)
 	 */
 	public <T> void insertDataListEntity(List<T> list) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		for (T object : list)

@@ -90,7 +90,6 @@ public class GetProfile implements Scrape {
 	public Object parsing(HtmlPage page, Object mainProfil) {
 		System.out.println("this.parsing() - START");
 		ProfilBisNode profil = new ProfilBisNode();
-		System.out.println(page.asXml());
 		//nazwa
     	List<HtmlSpan> nazwy = (List<HtmlSpan>) page.getByXPath("//span[@itemprop='legalName']");
      	for(HtmlSpan nazwa:nazwy){profil.setNazwa(nazwa.asText());}
@@ -215,7 +214,7 @@ public class GetProfile implements Scrape {
 
 	}
 	public void insertDataEntity(Object o) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		
 		entityManager.getTransaction().begin();
@@ -227,7 +226,7 @@ public class GetProfile implements Scrape {
 		
 	}
 	public <T> void insertDataListEntity(List<T> list) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		
 		entityManager.getTransaction().begin();

@@ -3,15 +3,12 @@ package crawler.bisnode_pl.profil;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 
 import crawler.api.Scrape;
-import crawler.bisnode_pl.index.*;
-
-import com.mysql.cj.api.jdbc.Statement;
+import crawler.bisnode_pl.index.GetIndex;
+import crawler.bisnode_pl.index.IndexRepository;
+import crawler.bisnode_pl.pre_index.PreIndexBisNode;
 
 public class MainProfil {
 
@@ -21,8 +18,8 @@ public class MainProfil {
 		// true - start index
 		// false - restart index
 		boolean startIndex;
-		if (!(properties.getProperty("test_index").contains("1")
-				|| properties.getProperty("test_profile").contains("1"))) {
+		if (!(properties.getProperty("test_index").contains("1") || properties.getProperty("test_profile").contains("1")
+				|| properties.getProperty("test_pre_index").contains("1"))) {
 			if (properties.getProperty("level1").contains("1")) {
 				startIndex = true;
 				System.out.println("level 1 zosta³ uruchomiony");
@@ -41,6 +38,12 @@ public class MainProfil {
 				System.out.println("level3 zosta³ pominiêty");
 		} else {
 			System.out.println("Wykryto sesjê testow¹. Level1, Level2, Level3 zosta³y pominiête");
+			if (properties.getProperty("test_pre_index").contains("1")) {
+				System.out.println("zosta³ uruchomiony test pre indexu");
+				PreIndexBisNode preIndex = new PreIndexBisNode(properties);
+			} else
+				System.out.println("test pre indexu zosta³ pominiêty");
+
 			if (properties.getProperty("test_index").contains("1")) {
 				System.out.println("zosta³ utuchomiony test indexu");
 				Scrape index = new GetIndex("http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=orl", properties);
@@ -91,31 +94,26 @@ public class MainProfil {
 		return properties;
 	}
 
-	public static void startProfile(Properties properties) {
-		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
-
-		ProfilRepository[] profilRepository = new ProfilRepository[numberOfThreads];
-		for (int i = 0; i < numberOfThreads; i++) {
-			profilRepository[i] = new ProfilRepository(properties, i);
-		}
-		Thread[] threads = new Thread[numberOfThreads];
-		for (int i = 0; i < numberOfThreads; i++) {
-			threads[i] = new Thread(profilRepository[i]);
-		}
-		for (int i = 0; i < numberOfThreads; i++) {
-			threads[i].start();
-		}
+	/**
+	 * Tworzenie tabeli letters ('aaa', 'zzz') z informacj¹ ile firm dla danego
+	 * ci¹gu Tworzenie tabeli index_pages przechowuj¹c¹ wszystkie URL do
+	 * scrapowania indexu
+	 * 
+	 * @param properties
+	 */
+	public static void startPreIndex(Properties properties) {
+		PreIndexBisNode preIndex = new PreIndexBisNode(properties);
 	}
 
 	/**
-	 * Scraping ca³ego indexu
+	 * Level 1 i 2 Scraping indexu
 	 * 
 	 * @param properties
 	 */
 	public static void startIndex(Properties properties, boolean startIndex) {
 		// tylko podczas startu scrapowania indexu uruchom
 		if (startIndex)
-			createTables(properties);
+			startPreIndex(properties);
 		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
 		IndexRepository[] indexRepository = new IndexRepository[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -132,87 +130,24 @@ public class MainProfil {
 	}
 
 	/**
-	 * Tworzenie tabeli letters ('aaa', 'zzz') z informacj¹ ile firm dla danego
-	 * ci¹gu Tworzenie tabeli index_pages przechowuj¹c¹ wszystkie URL do
-	 * scrapowania indexu
+	 * Scraping profili Level3
 	 * 
 	 * @param properties
 	 */
-	public static void createTables(Properties properties) {
-		final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-		final String DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
-				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
-		final String USER = properties.getProperty("user");
-		final String PASS = properties.getProperty("password");
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			// STEP 2: Register JDBC driver
-			Class.forName("com.mysql.cj.jdbc.Driver");
+	public static void startProfile(Properties properties) {
+		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
 
-			// STEP 3: Open a connection
-			System.out.println("Connecting to a selected database...");
-			conn = DriverManager.getConnection(DB_URL, USER, PASS);
-			System.out.println("Connected database successfully...");
-
-			// Usuniecie istniej¹cych tabel i stworzenie nowych
-			System.out.println("Creating table in given database...");
-			stmt = (Statement) conn.createStatement();
-			String sql = "DROP TABLE IF EXISTS `" + properties.getProperty("databaseName") + "`.`letters`;";
-			stmt.execute(sql);
-			sql = "DROP TABLE IF EXISTS `" + properties.getProperty("databaseName") + "`.`index_pages`;";
-			stmt.execute(sql);
-			sql = "CREATE TABLE `" + properties.getProperty("databaseName")
-					+ "`.`letters` (`letters` VARCHAR(3) NULL,`numberOfCompanies` INT NULL DEFAULT NULL);";
-			stmt.executeUpdate(sql);
-			System.out.println("Created table letters in given database...");
-			sql = "CREATE TABLE `" + properties.getProperty("databaseName")
-					+ "`.`index_pages` (  `letters` VARCHAR(3) NULL,  `url` VARCHAR(500) NULL,  `status` VARCHAR(5) NULL DEFAULT NULL);";
-			stmt.executeUpdate(sql);
-			System.out.println("Created table index_pages in given database...");
-			StringBuilder letters = new StringBuilder(
-					"INSERT INTO `" + properties.getProperty("databaseName") + "`.`letters`(letters)  VALUES  ");
-			for (char first = 'a'; first <= 'z'; first++) {
-				for (char second = 'a'; second <= 'z'; second++) {
-					for (char third = 'a'; third <= 'z'; third++) {
-						letters.append(
-								"('" + String.valueOf(first) + String.valueOf(second) + String.valueOf(third) + "'),");
-					}
-				}
-			}
-			String sqlInsert = letters.substring(0, letters.length() - 1);
-			stmt.execute(sqlInsert);
-			// usuniêcie tabeli dla indexu
-			sql = "DROP TABLE IF EXISTS " + properties.getProperty("databaseName") + ".`index`;";
-			System.err.println(sql);
-			stmt.executeUpdate(sql);
-			// stworzenie nowej tabeli dla indexu
-			sql = "CREATE TABLE `" + properties.getProperty("databaseName")
-					+ "`.`index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `adres` MEDIUMTEXT NULL,  `krs` VARCHAR(45) NULL,  `nip` VARCHAR(45) NULL,  `data` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, `meta` VARCHAR(1000) NULL,  `status` VARCHAR(45) NULL DEFAULT NULL,  INDEX `index1` (`url` ASC),  INDEX `indexNip` (`nip` ASC),  INDEX `indexKrs` (`krs` ASC));";
-			System.err.println(sql);
-			stmt.executeUpdate(sql);
-
-		} catch (SQLException se) {
-			// Handle errors for JDBC
-			se.printStackTrace();
-		} catch (Exception e) {
-			// Handle errors for Class.forName
-			e.printStackTrace();
-		} finally {
-			// finally block used to close resources
-			try {
-				if (stmt != null)
-					conn.close();
-			} catch (SQLException se) {
-			} // do nothing
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			} // end finally try
-		} // end try
-
+		ProfilRepository[] profilRepository = new ProfilRepository[numberOfThreads];
+		for (int i = 0; i < numberOfThreads; i++) {
+			profilRepository[i] = new ProfilRepository(properties, i);
+		}
+		Thread[] threads = new Thread[numberOfThreads];
+		for (int i = 0; i < numberOfThreads; i++) {
+			threads[i] = new Thread(profilRepository[i]);
+		}
+		for (int i = 0; i < numberOfThreads; i++) {
+			threads[i].start();
+		}
 	}
 
 }
