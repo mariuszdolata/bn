@@ -25,10 +25,10 @@ public class MainProfil {
 				|| properties.getProperty("test_profile").contains("1"))) {
 			if (properties.getProperty("level1").contains("1")) {
 				startIndex = true;
-				System.out.println("level1 zosta³ uruchomiony");
+				System.out.println("level 1 zosta³ uruchomiony");
 			} else {
 				startIndex = false;
-				System.out.println("level1 zosta³ pominiêty");
+				System.out.println("level 1 zosta³ pominiêty");
 			}
 			if (properties.getProperty("level2").contains("1")) {
 
