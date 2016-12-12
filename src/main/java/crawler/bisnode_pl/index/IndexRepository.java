@@ -4,26 +4,35 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
+import java.util.zip.CheckedInputStream;
 
 import com.mysql.cj.api.jdbc.Statement;
-import com.mysql.cj.jdbc.PreparedStatement;
 
 import crawler.api.MainCrawler;
 
 public class IndexRepository extends MainCrawler implements Runnable {
 
-
+	private int threadId;
+	private Properties properties;
+	private String DB_DRIVER;
+	private String DB_URL;
+	private String DB_USER;
+	private String DB_PASSWORD;
+	private Connection conn = null;
+	private Statement stmt = null;
+	private ResultSet rs = null;
 
 	public IndexRepository(Properties properties, int threadId) {
-		super(properties);
-		 
-		this.setThreadId(threadId);
-		
+		this.threadId = threadId;
+		this.properties = properties;
+		this.DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+		this.DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
+				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
+		this.DB_USER = properties.getProperty("user");
+		this.DB_PASSWORD = properties.getProperty("password");
 		try {
-			Class.forName(this.getDB_DRIVER());
+			Class.forName(DB_DRIVER);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -38,111 +47,30 @@ public class IndexRepository extends MainCrawler implements Runnable {
 	public void run() {
 		// sprawdzenie czy nie trzeba dokoñczyæ pierwszej strony w indexie
 		try {
-			//dokoñczenie pierwszej czêœci indexu - wczytania wszystkich kombinacji 3 liter oraz zapisania pierwszych 20 rezultatów
-			while (checkIndex());
-			System.out.println("metoda checkIndex() zosta³a skonczona");
-			//dokoñczenie drugiej czêœci indexu - wczytanie danych z tabeli index_pages oraz zapisania reszty rezultatów z indexu
-			while(checkRestIndex());
-			System.out.println("metoda checkRestIndex() zosta³a skonczona");
+			while (checkIndex())
+				;
 			System.out.println("Poziom 1 z 3 strony bisnode.pl jest ju¿ skoñczony");
 		} catch (SQLException e) {
-			System.err.println("w¹tek nr " + this.threadId + " B³¹d pobierania danych z tabeli letters lub tabeli index_pages");
+			System.err.println("w¹tek nr " + this.threadId + " B³¹d pobierania danych z tabeli letters");
 			e.printStackTrace();
 		}
 	}
-private boolean checkRestIndex() throws SQLException{
-	class IndexPage{
-		public String letters;
-		public String url;
-		public int numberOfCompanies;
-		public String status;
-		public IndexPage(String letters, String url, int numberOfCompanies, String status) {
-			super();
-			this.letters = letters;
-			this.url = url;
-			this.numberOfCompanies = numberOfCompanies;
-			this.status = status;
-		}
-		
-	}
-	List<IndexPage> recordsToScrape = new ArrayList<IndexPage>();
-	try {
-		this.rs = getRecords(
-				"SELECT letters, url, number, status FROM bisnode_pl.index_pages where status is null order by rand() limit 10;", this.getRs(), this.getStmt());
-		while(rs.next()){
-			recordsToScrape.add(new IndexPage(rs.getString("letters"), rs.getString("url"), rs.getInt("number"), rs.getString("status")));
-		}
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (SQLException e) {
-		System.out.println("M: nie mo¿na pobraæ danych z tabeli letters. IndexRepository.run().getRecords()");
-		e.printStackTrace();
-	}
-	//index jest niedokoñczony. Wczytanie pojedynczych stron oraz aktualizacja statusu dla tabeli index_page
-	if(recordsToScrape.size()>0){
-		for(IndexPage indexPage:recordsToScrape){
-			GetIndex index=new GetIndex(indexPage.letters, indexPage.numberOfCompanies, properties);
-			String updateSql="UPDATE index_pages SET status='done' WHERE letters like ? AND number =?";
-			PreparedStatement preparedStatement = (PreparedStatement)conn.prepareStatement(updateSql);
-			preparedStatement.setString(1, indexPage.letters);
-			preparedStatement.setInt(2, indexPage.numberOfCompanies);
-			preparedStatement.executeUpdate();
-			this.delay();
-		}
-		
-		return true;
-	}
-	//index jest skoñczony
-	else{
-		System.out.println("Index zosta³ skoñczony");
-		return false;
-	}
-}
-/**
- * Wstawianie rekordów do tabeli index_pages. Dziêki nim program bêdzie widzia³, które podstrony indexu
- * nie zosta³y jeszcze zescrapowane. Ta metoda umo¿liwia wznawianie scrapowania indexu bez serializacji
- * oraz bez podzia³u na crawlere ze wzglêdu na id. Daje swobodny dostêp wszytkim w¹tkom do niedokoñczonego indexu.
- * @param letters
- * @param numberOfCompanies
- */
-	private void insertUrlsToScrapeForIndex(String letters, int numberOfCompanies){
-		if(numberOfCompanies>=20){
-			StringBuilder sqlInsert = new StringBuilder("INSERT INTO index_pages (letters, url, number) VALUES ");
-			for(int i=20;i<numberOfCompanies;i+=20){
-				sqlInsert.append("('"+letters+"','"+"http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa="+letters+"&strona="+Integer.toString(i)+"','"+Integer.toString(i)+"'),");
-			}
-			System.out.println("sql insert: "+sqlInsert.toString().substring(0, sqlInsert.length()-1));
-			try {
-				stmt.executeUpdate(sqlInsert.toString().substring(0, sqlInsert.length()-1));
-			} catch (SQLException e) {
-				System.out.println("b³¹d metody InsertUrlsToScrapeForIndex() nie uda³o siê wstawiæ wyników do db");
-				e.printStackTrace();
-			}
-		}
-	}
+
 	/**
 	 * Sprawdzanie czy crawler wykona³ wszystkie kombinacje liter. Jeœli nie
 	 * wykona³ w pierwszej kolejnoœæi dokoñczy je jednoczeœnie zapisuj¹c za
 	 * pomoc¹ obiektu GetIndex pierwsze 20 wyników dla zadanego ci¹gu znaków.
 	 * Jesli ¿adna kombinacja liter nie ma NULL w liczbie firm crawler
 	 * przystêpuje do dokoñczenia indexu.
-	 * Ponad to metoda zapisujke informacjê o liczbie firm dla danych liter
-	 * oraz tworzy (poœrednio) rekordy w tabeli index_pages, które bêd¹
-	 * wykorzystane do dokoñczenia indexu.
 	 * 
 	 * @return
 	 * @throws SQLException
 	 */
 	private boolean checkIndex() throws SQLException {
 		ResultSet unfinishedLetters = null;
-		List<String> letters = new ArrayList<String>();
 		try {
 			this.rs = getRecords(
-					"SELECT letters, numberOfCompanies FROM bisnode_pl.letters where numberOfCompanies is null order by rand() limit 1", this.getRs(), this.getStmt());
-			while(rs.next()){
-				letters.add(rs.getString("letters"));
-			}
+					"SELECT letters, numberOfCompanies FROM bisnode_pl.letters where numberOfCompanies is null order by rand() limit 100");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -150,30 +78,23 @@ private boolean checkRestIndex() throws SQLException{
 			System.out.println("M: nie mo¿na pobraæ danych z tabeli letters. IndexRepository.run().getRecords()");
 			e.printStackTrace();
 		}
-		if(letters.size()>0){
+		// wykryto niedokoñczony index
+		// rs.beforeFirst();
+		if (rs.next()) {
+			rs.beforeFirst();
 			System.out.println("Wykryto niedokoñczony index");
 			// rozpoczêcie procesu dokañczania
-		for(String letter:letters){
-				System.out.println("Kolejna iteracja pêtli while w chechIndex");
-				System.out.println("watek nr " + this.threadId + ", " + letter);
-				// Tutaj nastêpuje wczytanie podstony indexu. 0 wczytuje pierwsz¹ podstronê
+			while (rs.next()) {
+				System.out.println("watek nr " + this.threadId + ", " + rs.getString("letters"));
+				String urlToScrape = "http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=" + rs.getString("letters");
+				// Tutaj nastêpuje wczytanie podstony indexu
 				// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-				GetIndex getIndex = new GetIndex(letter, 0,this.properties);
-				try{
-					String updateSql = "UPDATE letters SET numberOfCompanies = ?  WHERE letters like ?";
-					PreparedStatement preparedStatement = (PreparedStatement)conn.prepareStatement(updateSql);
-					preparedStatement.setInt(1, getIndex.getNumberOfCompanies());
-					preparedStatement.setString(2, letter);
-					preparedStatement.executeUpdate();
-					System.out.println("UPDATE SQL="+updateSql);
-					insertUrlsToScrapeForIndex(letter, getIndex.getNumberOfCompanies());
-					
-				}catch(Exception e){
-					System.err.println("Nie uda³o siê zaktualizowaæ informacji o liczbie firm dla podanego ci¹gu wejœciowego "+letter);
-					e.printStackTrace();
-				}
-				this.delay();				
-			} 
+				GetIndex getIndex = new GetIndex(urlToScrape, this.properties);
+				
+				//Uaktualnienie informacji o liczbie firm dla zadanego ci¹gu znaków
+				sqlExecute("UPDATE letters set numberOfCompanies=" + getIndex.getNumberOfCompanies()
+						+ "WHERE letters like '" + rs.getString("letters") + "'");
+			}
 			return true;
 		} else {
 			return false;
@@ -198,23 +119,23 @@ private boolean checkRestIndex() throws SQLException{
 		}
 	}
 
-//	private ResultSet getRecords(String sqlSelect) throws SQLException, ClassNotFoundException {
-//
-//		try {
-//			System.out.println("Wywo³anie funkcji GETRECORD");
-//			// execute select SQL stetement
-//			rs = stmt.executeQuery(sqlSelect);
-//
-//		} catch (SQLException e) {
-//			System.out.println(e.getMessage());
-//		} finally {
-//			// if (stmt != null) {
-//			// stmt.close();
-//			// }
-//			// if (conn != null) {
-//			// conn.close();
-//			// }
-//		}
-//		return rs;
-//	}
+	private ResultSet getRecords(String sqlSelect) throws SQLException, ClassNotFoundException {
+
+		try {
+
+			// execute select SQL stetement
+			rs = stmt.executeQuery(sqlSelect);
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			// if (stmt != null) {
+			// stmt.close();
+			// }
+			// if (conn != null) {
+			// conn.close();
+			// }
+		}
+		return rs;
+	}
 }

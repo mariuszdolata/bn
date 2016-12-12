@@ -3,10 +3,10 @@ package crawler.proby;
 import java.util.Date;
 
 public class Proba {
-	public String str1;
-	public String str2;
-	public int integerr;
-	public Date data;
+	private String str1;
+	private String str2;
+	private int integerr;
+	private Date data;
 	public String getStr1() {
 		return str1;
 	}
@@ -34,11 +34,6 @@ public class Proba {
 	public Proba() {
 		super();
 	}
-	@Override
-	public String toString() {
-		return "Proba [str1=" + str1 + ", str2=" + str2 + ", integerr=" + integerr + ", data=" + data + "]";
-	}
-	
 	
 
 }

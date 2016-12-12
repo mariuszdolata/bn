@@ -18,24 +18,23 @@ public class BisNodeStart {
 		Properties properties = loadProperties();
 		// true - start index
 		// false - restart index
-		boolean startPreIndex;
+		boolean startIndex;
 		if (!(properties.getProperty("test_index").contains("1") || properties.getProperty("test_profile").contains("1")
 				|| properties.getProperty("test_pre_index").contains("1"))) {
 			if (properties.getProperty("level1").contains("1")) {
-				startPreIndex = true;
+				startIndex = true;
 				System.out.println("level 1 zosta³ uruchomiony");
 			} else {
-				startPreIndex = false;
+				startIndex = false;
 				System.out.println("level 1 zosta³ pominiêty");
 			}
 			if (properties.getProperty("level2").contains("1")) {
-				startIndex(properties, startPreIndex);
+
 				System.out.println("level2 zosta³ uruchomiony");
 			} else
 				System.out.println("level2 zosta³ pominiêty");
 			if (properties.getProperty("level3").contains("1")) {
 				System.out.println("level3 zosta³ uruchomiony");
-				startProfile(properties);
 			} else
 				System.out.println("level3 zosta³ pominiêty");
 		} else {
@@ -48,13 +47,12 @@ public class BisNodeStart {
 
 			if (properties.getProperty("test_index").contains("1")) {
 				System.out.println("zosta³ utuchomiony test indexu");
-				//0 dla sesji testowej wczytuje pierwsz¹ podstronê indexu
-				Scrape index = new GetIndex("orl", 0,properties);
+				Scrape index = new GetIndex("http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=orl", properties);
 			} else
 				System.out.println("test indexu zosta³ pominiêty");
 			if (properties.getProperty("test_profile").contains("1")) {
 				System.out.println("Zosta³ uruchomiony test profilu");
-				Scrape profil = new GetProfile("http://www.bisnode.pl/firma/?id=777814&nazwa=WIS£A_P£OCK_S_A", properties);
+				Scrape profil = new GetProfile("http://www.bisnode.pl/firma/?id=777814&nazwa=WIS£A_P£OCK_S_A");
 			} else
 				System.out.println("test profilu zosta³ pominiêty");
 		}

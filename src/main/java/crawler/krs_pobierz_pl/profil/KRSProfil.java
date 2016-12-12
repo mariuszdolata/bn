@@ -42,7 +42,7 @@ public class KRSProfil extends MainCrawler implements Scrape {
 	}
 
 	public KRSProfil() {
-		super(properties);
+		super();
 		this.start();
 	}
 

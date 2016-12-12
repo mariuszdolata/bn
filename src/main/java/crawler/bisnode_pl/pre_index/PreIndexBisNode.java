@@ -47,7 +47,7 @@ public class PreIndexBisNode {
 			stmt.executeUpdate(sql);
 			System.out.println("Created table letters in given database...");
 			sql = "CREATE TABLE `" + System.getProperty("database.name")
-					+ "`.`index_pages` ( `letters` VARCHAR(45) NULL,  `url` VARCHAR(500) NULL,  `number` INT(10) NULL,  `status` VARCHAR(45) NULL,  INDEX `index1` (`url` ASC));";
+					+ "`.`index_pages` (  `letters` VARCHAR(3) NULL,  `url` VARCHAR(500) NULL,  `status` VARCHAR(5) NULL DEFAULT NULL);";
 			stmt.executeUpdate(sql);
 			System.out.println("Created table index_pages in given database...");
 			StringBuilder letters = new StringBuilder(

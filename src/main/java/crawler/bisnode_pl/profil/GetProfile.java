@@ -3,7 +3,6 @@ package crawler.bisnode_pl.profil;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -24,16 +23,8 @@ public class GetProfile implements Scrape {
 	private String urlToScrape;
 	private HtmlPage currentPage;
 	private ProfilBisNode profil;
-	private Properties properties;
 	
 	
-	
-	public Properties getProperties() {
-		return properties;
-	}
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
 	public String getUrlToScrape() {
 		return urlToScrape;
 	}
@@ -52,8 +43,7 @@ public class GetProfile implements Scrape {
 	public void setProfil(ProfilBisNode profil) {
 		this.profil = profil;
 	}
-	public GetProfile(String urlToScrape, Properties properties){
-		this.setProperties(properties);
+	public GetProfile(String urlToScrape){
 		System.out.println("Konstruktor GetProfile dla url="+urlToScrape);
 		this.urlToScrape=urlToScrape;
 		try{
@@ -79,7 +69,7 @@ public class GetProfile implements Scrape {
 	public HtmlPage getPage(String url) {
 		WebClient client = new WebClient();
 //		client.getOptions().setThrowExceptionOnScriptError(false);
-		client.getOptions().setJavaScriptEnabled(true);
+		client.getOptions().setJavaScriptEnabled(false);
 		try {
 			return client.getPage(url);
 		} catch (FailingHttpStatusCodeException e) {
@@ -133,7 +123,7 @@ public class GetProfile implements Scrape {
      	String keyKRS="KRS";
      	try{
      		int krsPosition = opis.indexOf(keyKRS);
-     		if(!opis.substring(krsPosition+4, krsPosition+14).contains(","))profil.setKrs(opis.substring(krsPosition+4, krsPosition+14));
+         	profil.setKrs(opis.substring(krsPosition+4, krsPosition+14));
      	}catch(Exception e){
      		System.err.println("Nie znaleziono numeru KRS");
      		profil.setKrs("NULL");
@@ -157,16 +147,11 @@ public class GetProfile implements Scrape {
 	    System.out.println(profil.toString());
 	    //DUNS
 	    Object object = page.getByXPath("//a[@id='linkduns']").get(0);
-	   /**
-	    * Wymagane client.getOptions().setJavaScriptEnabled(true); w public HtmlPage getPage(String url)
-	    */
 	    try {
 	    	HtmlAnchor dunsAnchor = page.getAnchorByText("Poka¿ numer DUNS");
 			HtmlPage pageDuns = dunsAnchor.click();
 			HtmlTableDataCell duns = (HtmlTableDataCell) pageDuns.getByXPath("//td[@id=\"duns\"]").get(0);
 			profil.setDuns(duns.asText());
-			if(page.equals(pageDuns)) System.out.println("Strony identyczne");
-			else System.out.println("strony siê ró¿ni¹");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

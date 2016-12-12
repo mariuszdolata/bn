@@ -27,7 +27,6 @@ import crawler.api.Scrape;
 
 public class GetIndex implements Scrape {
 	private String urlToScrape;
-	private String lettersToScrape;
 	private HtmlPage currentPage;
 	private List<IndexBisNode> indexList;
 	private Properties properties;
@@ -39,16 +38,6 @@ public class GetIndex implements Scrape {
 	private Connection conn = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
-	
-	
-
-	public String getLettersToScrape() {
-		return lettersToScrape;
-	}
-
-	public void setLettersToScrape(String lettersToScrape) {
-		this.lettersToScrape = lettersToScrape;
-	}
 
 	public Properties getProperties() {
 		return properties;
@@ -155,7 +144,7 @@ public class GetIndex implements Scrape {
 	 * @param urlToScrape
 	 * @param properties
 	 */
-	public GetIndex(String lettersToScrape, int pageNumber, Properties properties) {
+	public GetIndex(String urlToScrape, Properties properties) {
 		this.setProperties(properties);
 		this.DB_DRIVER = "com.mysql.cj.jdbc.Driver";
 		this.DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
@@ -176,7 +165,7 @@ public class GetIndex implements Scrape {
 			e.printStackTrace();
 		}
 
-		this.urlToScrape = "http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=" + lettersToScrape+"&strona="+Integer.toString(pageNumber);
+		this.urlToScrape = urlToScrape;
 		try {
 			this.currentPage = this.getPage(urlToScrape);
 			// jeœli strona wczytana nie jest pusta
