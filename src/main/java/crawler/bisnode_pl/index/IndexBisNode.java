@@ -1,8 +1,13 @@
 package crawler.bisnode_pl.index;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class IndexBisNode {
@@ -17,8 +22,32 @@ public class IndexBisNode {
 	private String meta;
 	private String threadId;
 	private String hostId;
+	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data", insertable = true)
+    private Date data =new Date();
+	private String status;
 	
 	
+	
+	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public Date getData() {
+		return data;
+	}
+	public void setData(Date data) {
+		this.data = data;
+	}
 	public String getMeta() {
 		return meta;
 	}
@@ -77,8 +106,9 @@ public class IndexBisNode {
 	}
 	@Override
 	public String toString() {
-		return "IndexBisNode [nazwa=" + nazwa + ", url=" + url + ", adres=" + adres + ", krs=" + krs + ", nip=" + nip
-				+ "]";
+		return "IndexBisNode [id=" + id + ", nazwa=" + nazwa + ", url=" + url + ", adres=" + adres + ", krs=" + krs
+				+ ", nip=" + nip + ", meta=" + meta + ", threadId=" + threadId + ", hostId=" + hostId + ", data=" + data
+				+ ", status=" + status + "]";
 	}
 	
 	

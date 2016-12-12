@@ -36,8 +36,17 @@ public class ProfilBisNode {
 	@GeneratedValue
 	private long id;
 	@Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "MODIFIED_DATE", insertable = true)
-    private Date modifiedDate =new Date();
+    @Column(name = "data", insertable = true)
+    private Date data =new Date();
+	
+	
+	
+	public Date getData() {
+		return data;
+	}
+	public void setData(Date data) {
+		this.data = data;
+	}
 	public String getNazwa() {
 		return nazwa;
 	}
