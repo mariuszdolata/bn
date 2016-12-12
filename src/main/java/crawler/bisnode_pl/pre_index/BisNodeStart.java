@@ -1,4 +1,4 @@
-package crawler.bisnode_pl.profil;
+package crawler.bisnode_pl.pre_index;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,9 +8,10 @@ import java.util.Properties;
 import crawler.api.Scrape;
 import crawler.bisnode_pl.index.GetIndex;
 import crawler.bisnode_pl.index.IndexRepository;
-import crawler.bisnode_pl.pre_index.PreIndexBisNode;
+import crawler.bisnode_pl.profil.GetProfile;
+import crawler.bisnode_pl.profil.ProfilRepository;
 
-public class MainProfil {
+public class BisNodeStart {
 
 	public static void main(String[] args) {
 		// wczytanie ustawien dla crawlera z pliku tekstowego
