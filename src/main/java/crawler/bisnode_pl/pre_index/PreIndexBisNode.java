@@ -19,8 +19,6 @@ public class PreIndexBisNode {
 	
 	public PreIndexBisNode(Properties properties){
 		final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-//		final String DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
-//				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
 		final String DB_URL = System.getProperty("database.url");
 		final String USER = System.getProperty("database.user");
 		final String PASS = System.getProperty("database.password");

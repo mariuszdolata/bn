@@ -18,7 +18,7 @@ public class IndexRepository extends MainCrawler implements Runnable {
 
 
 	public IndexRepository(Properties properties, int threadId) {
-		super(properties);
+		super(properties, threadId);
 		 
 		this.setThreadId(threadId);
 		

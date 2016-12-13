@@ -78,7 +78,8 @@ public class MainCrawler {
 	public void setRs(ResultSet rs) {
 		this.rs = rs;
 	}
-	public MainCrawler(Properties properties) {
+	public MainCrawler(Properties properties, int threadId) {
+			this.setThreadId(threadId);
 			this.setProperties(properties);
 			this.setDB_DRIVER("com.mysql.cj.jdbc.Driver"); 
 			this.setDB_URL( "jdbc:mysql://" + properties.getProperty("serverName") + "/"

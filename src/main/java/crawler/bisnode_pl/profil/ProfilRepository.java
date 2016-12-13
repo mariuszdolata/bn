@@ -30,7 +30,7 @@ public class ProfilRepository extends MainCrawler implements Runnable {
 		this.numberOfThread = numberOfThread;
 	}
 	public ProfilRepository(Properties properties, int threadId){
-		super(properties);
+		super(properties, threadId);
 		
 		try {
 			Class.forName(DB_DRIVER);
