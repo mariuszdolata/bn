@@ -8,6 +8,7 @@ import java.util.Properties;
 public abstract  class StartCrawler {
 	public Properties properties;
 	
+	
 	public Properties getProperties() {
 		return properties;
 	}
@@ -16,6 +17,8 @@ public abstract  class StartCrawler {
 	}
 
 	public static Properties loadProperties(String filePath){
+		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
 		Properties properties = new Properties();
 		InputStream input = null;
 		int numberOfThread = 99;

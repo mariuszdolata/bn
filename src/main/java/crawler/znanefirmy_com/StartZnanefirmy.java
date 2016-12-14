@@ -1,17 +1,32 @@
 package crawler.znanefirmy_com;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import crawler.api.Scrape;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
 import crawler.api.StartCrawler;
-import crawler.bisnode_pl.index.GetIndex;
-import crawler.bisnode_pl.pre_index.PreIndexBisNode;
-import crawler.bisnode_pl.profil.GetProfile;
-import crawler.bisnode_pl.profil.ProfilRepository;
 
 public class StartZnanefirmy extends StartCrawler {
+	public static EntityManagerFactory entityManagerFactory;
+	
+
+	public static EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
+	public static void setEntityManagerFactory(String persistenceUnit) {
+		StartZnanefirmy.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
+	}
 
 	public static void main(String[] args) {
+		StartZnanefirmy.setEntityManagerFactory("znanefirmy");
+//		test();
+		
 
 		// wczytanie ustawien dla crawlera z pliku tekstowego
 		Properties properties = StartZnanefirmy.loadProperties("c:\\crawlers\\properties\\znanefirmy_com.properties");
@@ -68,6 +83,8 @@ public class StartZnanefirmy extends StartCrawler {
 				System.out.println("test_level4 zosta³ pominiêty");
 		}
 		//////////////////////
+//		StartZnanefirmy.getEntityManagerFactory().close();
+		
 
 	}
 
@@ -86,12 +103,12 @@ public class StartZnanefirmy extends StartCrawler {
 		if(createTables){		
 			ZnanefirmyCreateTables znanefirmyCreateTables = new ZnanefirmyCreateTables(properties);
 		}else System.out.println("Tworzenie tabel oraz scraping bran¿ zosta³ pominiêty");
-		ZnanefirmyGetIndex znanefirmyGetIndex = new ZnanefirmyGetIndex(properties, "http://znanefirmy.com/branza/33/sprzedaz-hurtowa-wyrobow-tekstylnych.html");
+//		ZnanefirmyGetIndex znanefirmyGetIndex = new ZnanefirmyGetIndex(properties, "http://znanefirmy.com/branza/33/sprzedaz-hurtowa-wyrobow-tekstylnych.html");
 		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
 
 		ZnanefirmyIndexRepository[] indexRepository = new ZnanefirmyIndexRepository[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
-			indexRepository[i] = new ZnanefirmyIndexRepository(properties, i);
+			indexRepository[i] = new ZnanefirmyIndexRepository(i, properties, StartZnanefirmy.entityManagerFactory);
 		}
 		Thread[] threads = new Thread[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -110,7 +127,7 @@ public class StartZnanefirmy extends StartCrawler {
 	 */
 	public static void startIndex(Properties properties) {
 		System.out.println("Start index");
-
+		
 	}
 
 	/**
@@ -121,10 +138,10 @@ public class StartZnanefirmy extends StartCrawler {
 	public static void startProfile(Properties properties) {
 		System.out.println("Start profile");
 		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
-
+		EntityManagerFactory entityManagerFactory=Persistence.createEntityManagerFactory("znanefirmy");
 		ZnanefirmyProfilRepository[] profilRepository = new ZnanefirmyProfilRepository[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
-			profilRepository[i] = new ZnanefirmyProfilRepository(properties, i);
+			profilRepository[i] = new ZnanefirmyProfilRepository(properties, i, entityManagerFactory);
 		}
 		Thread[] threads = new Thread[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -133,7 +150,25 @@ public class StartZnanefirmy extends StartCrawler {
 		for (int i = 0; i < numberOfThreads; i++) {
 			threads[i].start();
 		}
+		
 
+	}
+	
+	public static void test(){
+		List<String> results = new ArrayList<String>();
+		do{
+			System.gc();
+			results.clear();
+			EntityManager em = StartZnanefirmy.getEntityManagerFactory().createEntityManager();
+			em.getTransaction().begin();
+			Query query = em.createNativeQuery("SELECT nazwa from branze order by rand() limit 5");
+			results=query.getResultList();
+			for(String s:results)System.out.println("globalny EMF="+s);
+			em.getTransaction().commit();
+			em.close();
+		}while(!results.isEmpty());
+		
+		System.out.println("koniec");
 	}
 
 }
