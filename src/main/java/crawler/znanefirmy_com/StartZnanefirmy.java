@@ -24,9 +24,7 @@ public class StartZnanefirmy extends StartCrawler {
 	}
 
 	public static void main(String[] args) {
-		StartZnanefirmy.setEntityManagerFactory("znanefirmy");
-//		test();
-		
+		StartZnanefirmy.setEntityManagerFactory("znanefirmy");		
 
 		// wczytanie ustawien dla crawlera z pliku tekstowego
 		Properties properties = StartZnanefirmy.loadProperties("c:\\crawlers\\properties\\znanefirmy_com.properties");
@@ -154,21 +152,5 @@ public class StartZnanefirmy extends StartCrawler {
 
 	}
 	
-	public static void test(){
-		List<String> results = new ArrayList<String>();
-		do{
-			System.gc();
-			results.clear();
-			EntityManager em = StartZnanefirmy.getEntityManagerFactory().createEntityManager();
-			em.getTransaction().begin();
-			Query query = em.createNativeQuery("SELECT nazwa from branze order by rand() limit 5");
-			results=query.getResultList();
-			for(String s:results)System.out.println("globalny EMF="+s);
-			em.getTransaction().commit();
-			em.close();
-		}while(!results.isEmpty());
-		
-		System.out.println("koniec");
-	}
-
+	
 }

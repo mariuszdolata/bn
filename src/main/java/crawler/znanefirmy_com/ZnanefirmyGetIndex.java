@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.persistence.EntityManagerFactory;
+
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlStrong;
@@ -33,13 +35,13 @@ public class ZnanefirmyGetIndex extends ScrapeClass implements Scrape {
 		this.companies = companies;
 	}
 
-	public ZnanefirmyGetIndex(Properties properties, String urlToScrape) {
-		super(properties);
+	public ZnanefirmyGetIndex(int threadId, Properties properties, EntityManagerFactory entityManagerFactory, String urlToScrape) {
+		super(threadId, properties, entityManagerFactory);
 		this.setUrlToScrape(urlToScrape);
 		this.setCurrentPage(this.getPage(this.getUrlToScrape()));
 //		System.out.println(this.getCurrentPage().asXml());
 		this.parsing(this.getCurrentPage(), new ZnanefirmyIndex());
-		this.insertDataListEntity(this.getCompanies(), "znanefirmy");
+		this.insertDataListEntity(this.getCompanies());
 	}
 
 	public List<String> fetchUrlsToScrape() {
@@ -108,10 +110,7 @@ public class ZnanefirmyGetIndex extends ScrapeClass implements Scrape {
 
 	}
 
-	public <T> void insertDataListEntity(List<T> list) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	
 

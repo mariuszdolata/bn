@@ -45,8 +45,10 @@ public class ZnanefirmyCreateTables {
 
 			stmt.executeUpdate(sql);
 			System.out.println("Created table letters in given database...");
+//			sql = "CREATE TABLE `" + System.getProperty("database.name")
+//					+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `data` TIMESTAMP CURRENT_TIMESTAMP,  `status` VARCHAR(10) NULL);";
 			sql = "CREATE TABLE `" + System.getProperty("database.name")
-					+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(500) NULL,  `data` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,  INDEX `index1` (`url` ASC));";
+			+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `data` TIMESTAMP NULL,  `status` VARCHAR(10) NULL, INDEX `index1` (`url` ASC));";
 			stmt.executeUpdate(sql);
 			System.out.println("Created table index_pages in given database...");
 

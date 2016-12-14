@@ -29,18 +29,12 @@ import crawler.bisnode_pl.index.IndexBisNode;
  * @author mariusz
  *
  */
-public class ScrapeClass {
+public class ScrapeClass extends DatabaseAccess {
 	protected String urlToScrape;	
 	protected HtmlPage currentPage;	
 	protected Properties properties;
 	protected int numberOfCompanies;
-	protected String DB_DRIVER;
-	protected String DB_URL;
-	protected String DB_USER;
-	protected String DB_PASSWORD;
-	protected Connection conn = null;
-	protected Statement stmt = null;
-	protected ResultSet rs = null;
+
 		
 
 	public String getUrlToScrape() {
@@ -67,67 +61,9 @@ public class ScrapeClass {
 	public void setNumberOfCompanies(int numberOfCompanies) {
 		this.numberOfCompanies = numberOfCompanies;
 	}
-	public String getDB_DRIVER() {
-		return DB_DRIVER;
-	}
-	public void setDB_DRIVER(String dB_DRIVER) {
-		DB_DRIVER = dB_DRIVER;
-	}
-	public String getDB_URL() {
-		return DB_URL;
-	}
-	public void setDB_URL(String dB_URL) {
-		DB_URL = dB_URL;
-	}
-	public String getDB_USER() {
-		return DB_USER;
-	}
-	public void setDB_USER(String dB_USER) {
-		DB_USER = dB_USER;
-	}
-	public String getDB_PASSWORD() {
-		return DB_PASSWORD;
-	}
-	public void setDB_PASSWORD(String dB_PASSWORD) {
-		DB_PASSWORD = dB_PASSWORD;
-	}
-	public Connection getConn() {
-		return conn;
-	}
-	public void setConn(Connection conn) {
-		this.conn = conn;
-	}
-	public Statement getStmt() {
-		return stmt;
-	}
-	public void setStmt(Statement stmt) {
-		this.stmt = stmt;
-	}
-	public ResultSet getRs() {
-		return rs;
-	}
-	public void setRs(ResultSet rs) {
-		this.rs = rs;
-	}
-	public ScrapeClass(Properties properties){
-		this.setProperties(properties);
-		this.DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-		this.DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
-				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
-		this.DB_USER = properties.getProperty("user");
-		this.DB_PASSWORD = properties.getProperty("password");
-		try {
-			Class.forName(DB_DRIVER);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			this.conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-			this.stmt = (Statement) conn.createStatement();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
+	public ScrapeClass(int threadId, Properties properties, EntityManagerFactory entityManagerFactory){
+		super(threadId, properties, entityManagerFactory);
 	}
 	/**
 	 * Metoda pobiera stronê www o adresie String url. Jeœli konieczne jest wy³¹czenie javaScript lub jakiekolwiek inne ustawienie obiektu client klasy WebClient
@@ -158,9 +94,8 @@ public class ScrapeClass {
 	 * znajduje siê persistence-unit z nazw¹ scraping!!!!!!!<<<<<<<<<<<<<<<<<<<<<
 	 * @param list
 	 */
-	public <T> void insertDataListEntity(List<T> list, String persistenceUnitName){
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName);
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
+	public <T> void insertDataListEntity(List<T> list){
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try{
 			for(T o:list){ 
@@ -174,16 +109,13 @@ public class ScrapeClass {
 		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		entityManagerFactory.close();
 	}
 	
 	public void insertDataEntity(Object o){
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("scraping");
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(o);
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		entityManagerFactory.close();
 	}
 }

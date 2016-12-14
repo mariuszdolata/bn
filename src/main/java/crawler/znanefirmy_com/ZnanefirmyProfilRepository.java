@@ -8,9 +8,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
-import crawler.api.Repository;
+import crawler.api.DatabaseAccess;
 
-public class ZnanefirmyProfilRepository extends Repository implements Runnable {
+public class ZnanefirmyProfilRepository extends DatabaseAccess implements Runnable {
 	public static EntityManagerFactory entityManagerFactory;
 
 	public ZnanefirmyProfilRepository(Properties properties, int threadId, EntityManagerFactory entityManagerFactory) {
@@ -23,7 +23,7 @@ public class ZnanefirmyProfilRepository extends Repository implements Runnable {
 		List<String> nazwy = new ArrayList<String>();
 		do{
 			nazwy.clear();
-			EntityManager entityManager = this.getEntityManagerFactoryl().createEntityManager();
+			EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 			entityManager.getTransaction().begin();
 			Query q=entityManager.createNativeQuery("SELECT nazwa FROM branze order by rand() LIMIT 5");
 			nazwy = q.getResultList();

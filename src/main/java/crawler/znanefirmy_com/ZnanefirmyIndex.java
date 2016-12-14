@@ -14,6 +14,7 @@ public class ZnanefirmyIndex {
 	@GeneratedValue
 	private long id;
 	private String nazwa;
+	@Column(length = 255)
 	private String url;
 	private String adres;
 

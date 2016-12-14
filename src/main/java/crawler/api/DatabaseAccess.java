@@ -4,10 +4,10 @@ import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 
-public class Repository {
+public class DatabaseAccess {
 	private int threadId;
 	private Properties properties;
-	private EntityManagerFactory entityManagerFactory;
+	private static  EntityManagerFactory entityManagerFactory;
 	public int getThreadId() {
 		return threadId;
 	}
@@ -20,13 +20,13 @@ public class Repository {
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
-	public EntityManagerFactory getEntityManagerFactoryl() {
+	public EntityManagerFactory getEntityManagerFactory() {
 		return entityManagerFactory;
 	}
 	public void setEntityManagerFactoryl(EntityManagerFactory entityManagerFactoryl) {
 		this.entityManagerFactory = entityManagerFactoryl;
 	}
-	public Repository(int threadId, Properties properties, EntityManagerFactory entityManagerFactory) {
+	public DatabaseAccess(int threadId, Properties properties, EntityManagerFactory entityManagerFactory) {
 		super();
 		this.threadId = threadId;
 		this.properties = properties;
