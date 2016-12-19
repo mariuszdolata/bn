@@ -2,23 +2,16 @@ package crawler.api;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.mysql.cj.api.jdbc.Statement;
-
-import crawler.bisnode_pl.index.IndexBisNode;
 
 /**
  * Klasa bazowa dla klas GetXXX, gdzie XXX to nazwa portalu. Przechowuje properties, nawi¹zuje po³¹czenie 
@@ -32,11 +25,18 @@ import crawler.bisnode_pl.index.IndexBisNode;
 public class ScrapeClass extends DatabaseAccess {
 	protected String urlToScrape;	
 	protected HtmlPage currentPage;	
+	protected int statusCode;
 	protected Properties properties;
 	protected int numberOfCompanies;
 
 		
 
+	public int getStatusCode() {
+		return statusCode;
+	}
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
 	public String getUrlToScrape() {
 		return urlToScrape;
 	}
@@ -73,6 +73,7 @@ public class ScrapeClass extends DatabaseAccess {
 	 */
 	public HtmlPage getPage(String url){
 		WebClient client = new WebClient();
+//		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
 		try {
 			return client.getPage(url);
 		} catch (FailingHttpStatusCodeException e) {

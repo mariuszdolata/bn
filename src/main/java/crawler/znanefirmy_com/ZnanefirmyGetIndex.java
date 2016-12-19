@@ -39,7 +39,7 @@ public class ZnanefirmyGetIndex extends ScrapeClass implements Scrape {
 		super(threadId, properties, entityManagerFactory);
 		this.setUrlToScrape(urlToScrape);
 		this.setCurrentPage(this.getPage(this.getUrlToScrape()));
-//		System.out.println(this.getCurrentPage().asXml());
+		this.setStatusCode(this.getCurrentPage().getWebResponse().getStatusCode());
 		this.parsing(this.getCurrentPage(), new ZnanefirmyIndex());
 		this.insertDataListEntity(this.getCompanies());
 	}
@@ -62,7 +62,7 @@ public class ZnanefirmyGetIndex extends ScrapeClass implements Scrape {
 		System.out.println("Pagination = "+maxPagination);
 		if(urls.size()==adresy.size()){			
 			for(int i=0;i<urls.size();i++){
-				companies.add(new ZnanefirmyIndex(urls.get(i).getTextContent(), "http://znanefirmy.com"+urls.get(i).getHrefAttribute(),adresy.get(i).asText() ));
+				companies.add(new ZnanefirmyIndex(urls.get(i).getTextContent(), "http://znanefirmy.com"+urls.get(i).getHrefAttribute(),adresy.get(i).asText(), this.getUrlToScrape()));
 			}
 		}
 		

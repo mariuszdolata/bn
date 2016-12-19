@@ -4,7 +4,10 @@ import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.log4j.Logger;
+
 public class DatabaseAccess {
+	public final static Logger logger=Logger.getLogger(DatabaseAccess.class);
 	private int threadId;
 	private Properties properties;
 	private static  EntityManagerFactory entityManagerFactory;

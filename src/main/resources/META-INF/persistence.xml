@@ -43,7 +43,7 @@
 	<persistence-unit name="znanefirmy" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>crawler.znanefirmy_com.ZnanefirmyIndex</class>
-<!-- 		<class>crawler.znanefirmy_com.ZnanefirmyProfil.java</class> -->
+		<class>crawler.znanefirmy_com.ZnanefirmyProfil</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />

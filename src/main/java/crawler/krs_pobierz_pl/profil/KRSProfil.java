@@ -2,6 +2,7 @@ package crawler.krs_pobierz_pl.profil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -41,14 +42,14 @@ public class KRSProfil extends MainCrawler implements Scrape {
 		this.currentPage = currentPage;
 	}
 
-	public KRSProfil() {
-		super(properties);
+	public KRSProfil(Properties properties, int threadId) {
+		super(properties, threadId);
 		this.start();
 	}
 
 	public List<String> fetchUrlsToScrape() {
 		ApplicationContext context = new AnnotationConfigApplicationContext(DatabaseConfig.class);
-		ProfilRepository profilRepository = context.getBean("profilRepository", ProfilRepository.class);
+		KrspobierzProfilRepository profilRepository = context.getBean("profilRepository", KrspobierzProfilRepository.class);
 		List<String> urlsToScrape = new ArrayList<String>();
 		return urlsToScrape;
 	}

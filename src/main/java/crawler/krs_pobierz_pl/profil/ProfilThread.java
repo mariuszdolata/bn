@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import crawler.api.DatabaseConfig;
+import crawler.api.*;
 
 public class ProfilThread implements Runnable{
 	private int number;
@@ -42,7 +42,7 @@ public class ProfilThread implements Runnable{
 
 	public void run() {
 		ApplicationContext context = new AnnotationConfigApplicationContext(DatabaseConfig.class);
-		ProfilRepository profilRepository = context.getBean("profilRepository", ProfilRepository.class);
+		KrspobierzProfilRepository profilRepository = context.getBean("profilRepository", KrspobierzProfilRepository.class);
 		List<String> urlsToScrape = new ArrayList<String>();
 		do {
 			urlsToScrape.clear();

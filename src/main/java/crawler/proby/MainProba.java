@@ -1,42 +1,33 @@
 package crawler.proby;
 
 import java.lang.reflect.Field;
+import org.apache.log4j.Logger;
 
 public class MainProba {
 
+	final static Logger logger = Logger.getLogger(MainProba.class);
 	public static void main(String[] args) {
-		Proba proba = new Proba();
-		try {
-			showParam(proba.getClass());
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		System.out.println("Main proba");
+		logger.info("#################################################################################");
+		logger.debug("logger debug");
+		logger.info("logger info");
+		logger.error("logger error");
+		logger.fatal("logger fatal");
+		logger.getLevel();
+
+		MainProba mainProba = new MainProba();
+		try{
+			int	score = mainProba.devide(0);
+			logger.info("Wynik = "+score);
+		}catch(Exception e){
+			logger.error("Devide error" + e.getMessage());
+			logger.error(mainProba.logger.hashCode());
 		}
+		
 
 	}
-	public static <T> void showParam(Class<T> clazz) throws NoSuchFieldException, SecurityException{
-		Field[] fields = clazz.getDeclaredFields();
-		for(Field field:fields){
-			System.out.println(field.getName()+ ", "+field.getType().getName());
-		}
-	
-		Field f = clazz.getDeclaredField("str1");
-		try {
-			f.set(clazz, "abc");
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Koniec przypisywania wartoœci");
-		System.out.println("clazz.str1="+clazz.toString());
-		
-		
+	public static int devide(int mianownik){
+		return 10/mianownik;
 	}
 
 }

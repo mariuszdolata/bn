@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -15,6 +17,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.mysql.cj.api.jdbc.Statement;
 
 public class ZnanefirmyCreateTables {
+	public final static Logger logger = Logger.getLogger(ZnanefirmyCreateTables.class);
 
 	public ZnanefirmyCreateTables(Properties properties) {
 		final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -43,13 +46,23 @@ public class ZnanefirmyCreateTables {
 			sql = "CREATE TABLE `" + System.getProperty("database.name")
 					+ "`.`branze` (  `nazwa` MEDIUMTEXT NULL,  `liczba_firm` INT(10) NULL DEFAULT NULL,  `url_branza` VARCHAR(500) NULL);";
 
-			stmt.executeUpdate(sql);
+			try {
+				stmt.executeUpdate(sql);
+				logger.info("Stworzono tabelê BRANZE");
+			} catch (Exception e) {
+				logger.error("Blad przy tworzeniu tabeli BRANZE" + e.getMessage());
+			}
 			System.out.println("Created table letters in given database...");
 //			sql = "CREATE TABLE `" + System.getProperty("database.name")
 //					+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `data` TIMESTAMP CURRENT_TIMESTAMP,  `status` VARCHAR(10) NULL);";
 			sql = "CREATE TABLE `" + System.getProperty("database.name")
-			+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `data` TIMESTAMP NULL,  `status` VARCHAR(10) NULL, INDEX `index1` (`url` ASC));";
-			stmt.executeUpdate(sql);
+			+ "`.`pre_index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `data` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,  `status` VARCHAR(10) NULL, INDEX `index1` (`url` ASC));";
+			try{
+				stmt.executeUpdate(sql);
+				logger.info("Stworzono tabele PRE_INDEX");
+			}catch(Exception e){
+				logger.error("BLAD przy tworzeniu tabeli PRE_INDEX" + e.getMessage());
+			}
 			System.out.println("Created table index_pages in given database...");
 
 			HtmlPage page = getPage("http://znanefirmy.com/produkty-i-uslugi/");
