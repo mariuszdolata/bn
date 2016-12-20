@@ -101,11 +101,11 @@ public class ScrapeClass extends DatabaseAccess {
 		try{
 			for(T o:list){ 
 				entityManager.persist(o);
-				System.out.println("Wstawienie wartoœci to tabeli " + o.getClass().getSimpleName());
+				logger.info("Wstawienie wartoœci to tabeli " + o.getClass().getSimpleName());
 			}
 			
 		}catch(IllegalArgumentException e){
-			System.err.println("Problem z insertem do tabeli");
+			logger.error("Problem z insertDataListEntity" + e.getMessage());
 			e.printStackTrace();
 		}
 		entityManager.getTransaction().commit();

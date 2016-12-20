@@ -17,6 +17,7 @@ public class ZnanefirmyIndexRepository extends DatabaseAccess implements Runnabl
 		super(threadId, properties, entityManagerFactory);
 
 	}
+	
 
 	/**
 	 * Metoda w pierwszej kolejnoœci sprawdza czy wszystkie pierwsze strony

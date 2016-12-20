@@ -3,22 +3,35 @@ package crawler.api;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-public abstract  class StartCrawler {
-	public Properties properties;
-	
-	
+import javax.persistence.EntityManagerFactory;
+
+public abstract class StartCrawler {
+	public static Properties properties;
+	public static EntityManagerFactory entityManagerFactory;
+
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
+	}
+
 	public Properties getProperties() {
 		return properties;
 	}
+
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
 
-	public static Properties loadProperties(String filePath){
+	public static Properties loadProperties(String filePath) {
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
-	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
 		Properties properties = new Properties();
 		InputStream input = null;
 		int numberOfThread = 99;
@@ -45,7 +58,9 @@ public abstract  class StartCrawler {
 				}
 			}
 		}
-	return properties;	
+		return properties;
 	}
 
+	
+	
 }

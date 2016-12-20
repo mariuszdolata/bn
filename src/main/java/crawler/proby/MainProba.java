@@ -1,6 +1,9 @@
 package crawler.proby;
 
-import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 
 public class MainProba {
@@ -16,6 +19,22 @@ public class MainProba {
 		logger.getLevel();
 
 		MainProba mainProba = new MainProba();
+		
+		
+		try {
+			int number = 5;
+			Class[] c = new Class[number];
+			for(int i=0;i<number;i++){
+				c[i]=Class.forName("crawler.proby.Proba");
+			}
+			for(int i=0;i<number;i++){
+				System.out.println("iteracja = "+i+c[i].getSimpleName());
+			}
+			
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try{
 			int	score = mainProba.devide(0);
 			logger.info("Wynik = "+score);

@@ -1,33 +1,28 @@
 package crawler.znanefirmy_com;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-
 import org.apache.log4j.Logger;
 
 import crawler.api.StartCrawler;
-import crawler.proby.MainProba;
 
 public class StartZnanefirmy extends StartCrawler {
 	public static EntityManagerFactory entityManagerFactory;
 	final static Logger logger = Logger.getLogger(StartZnanefirmy.class);
 
-	public static EntityManagerFactory getEntityManagerFactory() {
-		return entityManagerFactory;
-	}
+//	public static EntityManagerFactory getEntityManagerFactory() {
+//		return entityManagerFactory;
+//	}
 
-	public static void setEntityManagerFactory(String persistenceUnit) {
-		StartZnanefirmy.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
-	}
+//	public static void setEntityManagerFactory(String persistenceUnit) {
+//		StartZnanefirmy.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
+//	}
 
 	public static void main(String[] args) {
-		StartZnanefirmy.setEntityManagerFactory("znanefirmy");
+		StartZnanefirmy.entityManagerFactory=Persistence.createEntityManagerFactory("znanefirmy");
+		
 		logger.info("##########################################################################");
 		logger.info("Kolejne uruchomienie programu");
 		logger.info("##########################################################################");
