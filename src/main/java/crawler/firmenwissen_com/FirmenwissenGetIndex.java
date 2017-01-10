@@ -15,7 +15,11 @@ import crawler.api.ScrapeClass;
 
 public class FirmenwissenGetIndex extends ScrapeClass implements Scrape {
 
-	private static final String[][] String = null;
+	/**
+	 * Liczba rekordów indexu na pojedynczej stronie
+	 */
+	private int totalNumberOfRecords;
+//	private static final String[][] String = null;
 	private List<FirmenwissenIndex> companies = new ArrayList<FirmenwissenIndex>();
 
 	public List<FirmenwissenIndex> getCompanies() {
@@ -24,6 +28,15 @@ public class FirmenwissenGetIndex extends ScrapeClass implements Scrape {
 
 	public void setCompanies(List<FirmenwissenIndex> companies) {
 		this.companies = companies;
+	}
+
+	
+	public int getTotalNumberOfRecords() {
+		return totalNumberOfRecords;
+	}
+
+	public void setTotalNumberOfRecords(int totalNumberOfRecords) {
+		this.totalNumberOfRecords = totalNumberOfRecords;
 	}
 
 	public FirmenwissenGetIndex(int threadId, Properties properties, EntityManagerFactory entityManagerFactory,
@@ -65,12 +78,13 @@ public class FirmenwissenGetIndex extends ScrapeClass implements Scrape {
 			}
 			iter++;
 		}
+		this.setTotalNumberOfRecords(records.size());
 		int numberOfRecord = records.size();
 		System.out.println("Liczba rekordow w indexie to = " + numberOfRecord);
 		for (int i = 0; i < numberOfRecord; i++) {
 			this.getCompanies()
 					.add(new FirmenwissenIndex(firmenUrl.get(i).getTextContent(), firmenUrl.get(i).getHrefAttribute(),
-							addressLine1[i], addressLine2[i], branches.get(i).asText(), updatess.get(i).asText()));
+							addressLine1[i], addressLine2[i], branches.get(i).asText(), updatess.get(i).asText(), this.getUrlToScrape()));
 		}
 		
 		return null;

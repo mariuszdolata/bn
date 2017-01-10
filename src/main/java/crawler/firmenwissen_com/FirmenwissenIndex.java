@@ -32,10 +32,19 @@ public class FirmenwissenIndex {
 	@org.hibernate.annotations.Generated(value=GenerationTime.INSERT)
 	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	private Date dateCreated;
+	private String meta;
 	
 	
 	
 	
+	
+	
+	public String getMeta() {
+		return meta;
+	}
+	public void setMeta(String meta) {
+		this.meta = meta;
+	}
 	public Date getLast_update() {
 		return last_update;
 	}
@@ -103,7 +112,7 @@ public class FirmenwissenIndex {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public FirmenwissenIndex(String name, String url, String address, String country, String branche, String update) {
+	public FirmenwissenIndex(String name, String url, String address, String country, String branche, String update, String meta) {
 		super();
 		this.name = name;
 		this.url = "http://www.firmenwissen.com/en"+url;
@@ -121,6 +130,7 @@ public class FirmenwissenIndex {
 			calendar.add(Calendar.DATE, days);
 //			System.out.println("Zmieniony czas="+sdf.format(calendar.getTime()));
 			this.last_update = calendar.getTime();
+			this.setMeta(meta);
 		
 		}
 		else this.update_info="";

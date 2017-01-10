@@ -77,25 +77,31 @@ public class FirmenwissenIndexRepository extends DatabaseAccess implements Runna
 				firmenwissenGetIndex.setCurrentPage(page);
 				firmenwissenGetIndex.parsing(firmenwissenGetIndex.getCurrentPage(), FirmenwissenIndex.class);
 				//UPDATE STATUSU
-				EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
-				entityManager.getTransaction().begin();
-				String sqlUpdate = "UPDATE firmenwissenpreindex SET status='done' WHERE url like ?";
-				int resultsNumber = entityManager.createNativeQuery(sqlUpdate).setParameter(1, this.getUrlsToScrape().get(i)).executeUpdate();
-				entityManager.getTransaction().commit();
-				entityManager.close();
+				
+				if(firmenwissenGetIndex.getTotalNumberOfRecords()==10){
+					EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
+					entityManager.getTransaction().begin();
+					String sqlUpdate = "UPDATE firmenwissenpreindex SET status='done' WHERE url like ?";
+					int resultsNumber = entityManager.createNativeQuery(sqlUpdate).setParameter(1, this.getUrlsToScrape().get(i)).executeUpdate();
+					entityManager.getTransaction().commit();
+					entityManager.close();
+				}
+				else logger.warn("0 obiektow dla INDEX URL="+this.getUrlsToScrape().get(i));
+				
 			}
 			firmenwissenGetIndex.insertDataListEntity(firmenwissenGetIndex.getCompanies());
 				
-				
-		}while(false);
-//		}while(!this.getUrlsToScrape().isEmpty());
+			System.gc();	
+//		}while(false);
+		}while(!this.getUrlsToScrape().isEmpty());
 		
 		this.logger.info("FirmenwissenIndexRepository - END thread="+this.getThreadId());
 	}
 	public List<String> fetchUrls(){
+		System.gc();
 		this.getUrlsToScrape().clear();
 		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
-		String sqlSelect="SELECT distinct url FROM firmenwissen_com.firmenwissenpreindex WHERE status is null order by rand() limit 10";
+		String sqlSelect="SELECT distinct url FROM firmenwissen_com.firmenwissenpreindex WHERE status is null order by rand() limit 5";
 		this.setUrlsToScrape(entityManager.createNativeQuery(sqlSelect).getResultList());
 		entityManager.close();
 		return this.getUrlsToScrape();

@@ -1,4 +1,4 @@
-package crawler.mojepanstwo_pl.gminy;
+package dbstructure;
 
 import java.math.BigDecimal;
 
@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class Gmina {
 
 	@Id
-	private long id;
+	private long idGmina;
 	private long globalId;
 	private long idPowiat;
 	private long idWojewodztwo;
@@ -30,10 +30,10 @@ public class Gmina {
 	private BigDecimal dochody;
 	private String radaNazwa;
 	public long getId() {
-		return id;
+		return idGmina;
 	}
 	public void setId(long id) {
-		this.id = id;
+		this.idGmina = id;
 	}
 	public long getGlobalId() {
 		return globalId;
@@ -155,7 +155,7 @@ public class Gmina {
 	}
 	@Override
 	public String toString() {
-		return "Gmina [id=" + id + ", globalId=" + globalId + ", idPowiat=" + idPowiat + ", idWojewodztwo="
+		return "Gmina [idGmina=" + idGmina + ", globalId=" + globalId + ", idPowiat=" + idPowiat + ", idWojewodztwo="
 				+ idWojewodztwo + ", telefon=" + telefon + ", fax=" + fax + ", adres=" + adres + ", nazwaUrzedu="
 				+ nazwaUrzedu + ", wydatkiRoczne=" + wydatkiRoczne + ", teryt=" + teryt + ", website=" + website
 				+ ", liczbaLudnosci=" + liczbaLudnosci + ", typId=" + typId + ", email=" + email + ", powierzchnia="

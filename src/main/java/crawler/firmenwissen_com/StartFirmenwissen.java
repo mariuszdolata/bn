@@ -6,12 +6,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.log4j.Logger;
+
 import crawler.api.StartCrawler;
 
 public class StartFirmenwissen extends StartCrawler {
-
+	public final static Logger logger = Logger.getLogger(StartFirmenwissen.class);
 	public static void main(String[] args) {
-		StartFirmenwissen.entityManagerFactory = Persistence.createEntityManagerFactory("firmenwissen");
+		try{
+			StartFirmenwissen.entityManagerFactory = Persistence.createEntityManagerFactory("firmenwissen");
+			
+		}catch(Exception e){
+			logger.error("Nie mo¿na stworzyc entityManagerFactory");
+			logger.error(e.getMessage());
+			logger.error(e.getClass().getName());
+			e.printStackTrace();
+		}
 		StartFirmenwissen.properties = loadProperties("c:\\crawlers\\properties\\firmenwissen_com.properties");
 
 		boolean createTables;
@@ -61,8 +71,9 @@ public class StartFirmenwissen extends StartCrawler {
 
 	// Stworzenie tabeli pomocniczej
 	public static void startLevel1() {
-		FirmenwissenPreIndexRepository firmenwissenPreIndexRepository = new FirmenwissenPreIndexRepository(2000,
+		FirmenwissenPreIndexRepository firmenwissenPreIndexRepository = new FirmenwissenPreIndexRepository(465000,
 				StartFirmenwissen.entityManagerFactory);
+		System.gc();
 
 	}
 
@@ -107,8 +118,7 @@ public class StartFirmenwissen extends StartCrawler {
 
 	public static void testLevel3() {
 		FirmenwissenGetProfil firmenwissenGetProfil = new FirmenwissenGetProfil(1, properties, entityManagerFactory,
-				"http://www.firmenwissen.com/en/az/firmeneintrag/39126/3170284185/HONESTA_BAUELEMENTE_VERWALTUNGS_GMBH.html");
-		
+				"http://www.firmenwissen.com/en/az/firmeneintrag/39126/3170284185/HONESTA_BAUELEMENTE_VERWALTUNGS_GMBH.html");		
 		FirmenwissenGetProfil firmenwissenGetProfil2 = new FirmenwissenGetProfil(1, properties, entityManagerFactory,
 				"https://www.firmenwissen.com/en/az/firmeneintrag/65203/6250164822/RHI_REFRACTORIES_SITE_SERVICES_GMBH.html");
 		FirmenwissenGetProfil firmenwissenGetProfil3 = new FirmenwissenGetProfil(1, properties, entityManagerFactory,
