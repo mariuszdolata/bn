@@ -9,8 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
@@ -75,6 +75,7 @@ public class ScrapeClass extends DatabaseAccess {
 		WebClient client = new WebClient();
 //		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
 		try {
+			logger.info("WYKONANIE getPage("+url+")");
 			return client.getPage(url);
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
@@ -90,6 +91,7 @@ public class ScrapeClass extends DatabaseAccess {
 			return null;
 		}
 	}
+	
 	/**
 	 * Wstawienie listy obiektów. Sprawdz czy w pliku persistence.xml 
 	 * znajduje siê persistence-unit z nazw¹ scraping!!!!!!!<<<<<<<<<<<<<<<<<<<<<
