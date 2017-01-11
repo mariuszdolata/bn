@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 public class PKD {
@@ -23,7 +24,7 @@ public class PKD {
 	private String nazwa;
 	private Boolean przewazajaca;
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "krspodmiot_pkd", joinColumns = @JoinColumn(name = "pkd_id"), inverseJoinColumns = @JoinColumn(name = "idKRSPodmiot"))
+	@JoinTable(name = "krspodmiot_pkd", joinColumns = @JoinColumn(name = "pkd_id"), inverseJoinColumns = @JoinColumn(name = "id_KRSPodmiot"))
 	private Set<KRSPodmiot> kRSPodmioty = new HashSet<KRSPodmiot>();
 
 	public long getId() {
@@ -72,7 +73,7 @@ public class PKD {
 
 	@Override
 	public String toString() {
-		return "PKD [id=" + id + ", kod=" + kod + ", nazwa=" + nazwa + ", przewazajaca=" + przewazajaca
+		return "PKD [id="+", kod=" + kod + ", nazwa=" + nazwa + ", przewazajaca=" + przewazajaca
 				+ ", kRSPodmioty=" + kRSPodmioty + "]";
 	}
 

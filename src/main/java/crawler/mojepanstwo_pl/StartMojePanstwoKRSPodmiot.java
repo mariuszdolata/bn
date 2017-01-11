@@ -21,7 +21,7 @@ public class StartMojePanstwoKRSPodmiot extends StartCrawler {
 			logger.error(e.getClass().getName());
 			e.printStackTrace();
 		}finally{
-//			StartMojePanstwoKRSPodmiot.entityManagerFactory.close();
+			
 		}
 		if (!properties.getProperty("test_level1").contains("1")) {
 			logger.info("Pominiêto sesjê testow¹");
@@ -40,6 +40,7 @@ public class StartMojePanstwoKRSPodmiot extends StartCrawler {
 				logger.info("level 1 test - pominiêty");
 		}
 
+//		StartMojePanstwoKRSPodmiot.entityManagerFactory.close();
 	}
 
 }

@@ -19,9 +19,10 @@ import org.hibernate.annotations.Type;
 public class KRSPodmiot {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="idKRSPodmiot")
-	private long idKRSPodmiot;
+//	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue
+	@Column(name="id_KRSPodmiot")
+	private long id_KRSPodmiot;
 	@Type(type="text")
 	private String firma;
 	@Type(type="text")
@@ -49,7 +50,6 @@ public class KRSPodmiot {
 	private String adresKraj;
 	@Type(type="text")
 	private String adres;
-	@Type(type="text")
 	private int rejestr;
 	private long formaPrawnaTypId;
 	private long formaPrawnaId;
@@ -117,10 +117,10 @@ public class KRSPodmiot {
 //	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
 //	private Set<Osoba> jedynyAkcjonariusz = new HashSet<Osoba>();
 	public long getIdKRSPodmiot() {
-		return idKRSPodmiot;
+		return id_KRSPodmiot;
 	}
-	public void setIdKRSPodmiot(long idKRSPodmiot) {
-		this.idKRSPodmiot = idKRSPodmiot;
+	public void setIdKRSPodmiot(long id_KRSPodmiot) {
+		this.id_KRSPodmiot = id_KRSPodmiot;
 	}
 	public String getFirma() {
 		return firma;
@@ -519,7 +519,7 @@ public class KRSPodmiot {
 	}
 	@Override
 	public String toString() {
-		return "KRSPodmiot [idKRSPodmiot=" + idKRSPodmiot + ", firma=" + firma + "\n, nazwa=" + nazwa + ", nazwaSkrocona="
+		return "KRSPodmiot [idKRSPodmiot=" + id_KRSPodmiot + ", firma=" + firma + "\n, nazwa=" + nazwa + ", nazwaSkrocona="
 				+ nazwaSkrocona + ", nazwaOrganuReprezentacji=" + nazwaOrganuReprezentacji + ", \nwykreslony="
 				+ wykreslony + ", formaPrawnaStr=" + formaPrawnaStr + ", regon=" + regon + ", \nkrs=" + krs + ", nip="
 				+ nip + ", oop=" + oop + ", siedziba=" + siedziba + ", adresUlica=" + adresUlica + ", \nadresNumer="

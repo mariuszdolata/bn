@@ -137,23 +137,17 @@ public class MojePanstwoKRSPodmiotGet extends ScrapeClass implements Scrape{
 			String[] dane = pkdObject.get("str").getAsString().split(",");
 			pkd.setKod(dane[0].replaceAll(" ", "")+"."+dane[1].replaceAll(" ", "")+"."+dane[2].replaceAll(" ", ""));
 			pkd.setNazwa(dane[3]);
+			pkd.setPrzewazajaca(pkdObject.get("przewazajaca").getAsBoolean());
 			podmiot.getDzialalnosci().add(pkd);
 //			for(int j=0;j<dane.length;j++) logger.info(">"+dane[j]+"<");
 		}
-//		try{
-//			
-//			this.insertDataEntity(podmiot);
-//		}catch(Exception e){
-//			logger.error(e.getMessage());
-//			logger.error(e.getClass().getName());
-//			logger.error(e.getStackTrace());
-//		}
+
 		try{
 			if(MojePanstwoKRSPodmiotGet.this.getEntityManagerFactory() !=null){
 				logger.info("EntityManagerFactory dzia³a");
 				EntityManager entityManager = MojePanstwoKRSPodmiotGet.this.getEntityManagerFactory().createEntityManager();
 				entityManager.getTransaction().begin();
-//				entityManager.persist(podmiot);
+				entityManager.persist(podmiot);
 				entityManager.getTransaction().commit();
 				entityManager.close();
 			}
