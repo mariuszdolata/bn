@@ -49,7 +49,6 @@ public class KRSPodmiot {
 	private String adresKraj;
 	@Type(type="text")
 	private String adres;
-	@Type(type="text")
 	private int rejestr;
 	private long formaPrawnaTypId;
 	private long formaPrawnaId;
