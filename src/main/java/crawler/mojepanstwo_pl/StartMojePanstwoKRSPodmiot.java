@@ -1,5 +1,7 @@
 package crawler.mojepanstwo_pl;
 
+import java.util.Date;
+
 import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
@@ -34,8 +36,13 @@ public class StartMojePanstwoKRSPodmiot extends StartCrawler {
 			logger.info("Wykryto sesjê testow¹");
 			if (properties.getProperty("test_level1").contains("1")) {
 				logger.info("level 1 - test");
-				MojePanstwoKRSPodmiotGet getProfil1 = new MojePanstwoKRSPodmiotGet(1, properties, entityManagerFactory,
-						"https://api-v3.mojepanstwo.pl/dane/krs_podmioty/23302.json?layers[]=dzialalnosci&layers[]=emisje_akcji&layers[]=firmy&layers[]=graph&layers[]=jedynyAkcjonariusz&layers[]=komitetZalozycielski&layers[]=reprezentacja&layers[]=nadzor&layers[]=oddzialy&layers[]=prokurenci&layers[]=wspolnicy");
+				logger.info("start:="+new Date());
+				for(int i=23302;i<23303;i++){
+					MojePanstwoKRSPodmiotGet getProfil1 = new MojePanstwoKRSPodmiotGet(1, properties, entityManagerFactory,
+							"https://api-v3.mojepanstwo.pl/dane/krs_podmioty/"+i+".json?layers[]=dzialalnosci&layers[]=emisje_akcji&layers[]=firmy&layers[]=graph&layers[]=jedynyAkcjonariusz&layers[]=komitetZalozycielski&layers[]=reprezentacja&layers[]=nadzor&layers[]=oddzialy&layers[]=prokurenci&layers[]=wspolnicy");					
+				}
+				logger.info("koniec:="+new Date());
+			StartMojePanstwoKRSPodmiot.entityManagerFactory.close();
 			} else
 				logger.info("level 1 test - pominiêty");
 		}

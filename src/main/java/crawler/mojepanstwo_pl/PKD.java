@@ -6,31 +6,35 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="pkd")
 public class PKD {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "pkd_id")
-	private long id;
+	
+	private Long id;
 	private String kod;
 	private String nazwa;
 	private Boolean przewazajaca;
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "krspodmiot_pkd", joinColumns = @JoinColumn(name = "pkd_id"), inverseJoinColumns = @JoinColumn(name = "idKRSPodmiot"))
-	private Set<KRSPodmiot> kRSPodmioty = new HashSet<KRSPodmiot>();
+//	@ManyToMany(cascade = CascadeType.ALL)
+//	@JoinTable(name = "krspodmiot_pkd", joinColumns = @JoinColumn(name = "pkd_id"), inverseJoinColumns = @JoinColumn(name = "idKRSPodmiot"))
+	private Set<KRSPodmiot> kRSPodmioty = new HashSet<KRSPodmiot>(0);
 
-	public long getId() {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "pkd_id", unique=true, nullable=false)
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -58,6 +62,7 @@ public class PKD {
 		this.przewazajaca = przewazajaca;
 	}
 
+	@ManyToMany(fetch=FetchType.LAZY, mappedBy="dzialalnosci")
 	public Set<KRSPodmiot> getkRSPodmioty() {
 		return kRSPodmioty;
 	}

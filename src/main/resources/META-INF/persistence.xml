@@ -112,13 +112,13 @@
 	
 	<persistence-unit name="mojepanstwo" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-<!-- 		<class>crawler.mojepanstwo_pl.EmisjaAkcji</class> -->
-<!-- 		<class>crawler.mojepanstwo_pl.Firma</class> -->
+		<class>crawler.mojepanstwo_pl.EmisjaAkcji</class>
+		<class>crawler.mojepanstwo_pl.Firma</class>
 		<class>crawler.mojepanstwo_pl.KRSPodmiot</class>
 <!-- 		<class>crawler.mojepanstwo_pl.Oddzial</class> -->
 <!-- 		<class>crawler.mojepanstwo_pl.Osoba</class> -->
 		<class>crawler.mojepanstwo_pl.PKD</class>
-<!-- 		<class>crawler.mojepanstwo_pl.Relationship</class> -->
+		<class>crawler.mojepanstwo_pl.Relationship</class>
 <!-- 		<class>crawler.mojepanstwo_pl.Reprezentacja</class> -->
 <!-- 		<class>crawler.mojepanstwo_pl.Wspolnik</class> -->
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>

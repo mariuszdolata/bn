@@ -1,20 +1,43 @@
 package crawler.mojepanstwo_pl;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="emisjaakcji")
 public class EmisjaAkcji {
 
-	@Id
-	private long id;
+	
+	private Long id;
 	private String seria;
-	private long liczba;
+	private Long liczba;
 	private String rodzajUprzywilejowania;
-	public long getId() {
+	private Set<KRSPodmiot> kRSPodmioty = new HashSet<KRSPodmiot>(0);
+	
+	
+	
+	public EmisjaAkcji(String seria, long liczba, String rodzajUprzywilejowania) {
+		super();
+		this.seria = seria;
+		this.liczba = liczba;
+		this.rodzajUprzywilejowania = rodzajUprzywilejowania;
+	}
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="emisjeakcji_id", unique=true, updatable=false)
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getSeria() {
@@ -23,10 +46,10 @@ public class EmisjaAkcji {
 	public void setSeria(String seria) {
 		this.seria = seria;
 	}
-	public long getLiczba() {
+	public Long getLiczba() {
 		return liczba;
 	}
-	public void setLiczba(long liczba) {
+	public void setLiczba(Long liczba) {
 		this.liczba = liczba;
 	}
 	public String getRodzajUprzywilejowania() {
@@ -35,11 +58,12 @@ public class EmisjaAkcji {
 	public void setRodzajUprzywilejowania(String rodzajUprzywilejowania) {
 		this.rodzajUprzywilejowania = rodzajUprzywilejowania;
 	}
-	public EmisjaAkcji(String seria, long liczba, String rodzajUprzywilejowania) {
-		super();
-		this.seria = seria;
-		this.liczba = liczba;
-		this.rodzajUprzywilejowania = rodzajUprzywilejowania;
+	@ManyToMany(fetch=FetchType.LAZY, mappedBy="emisjeAkcji")
+	public Set<KRSPodmiot> getkRSPodmioty() {
+		return kRSPodmioty;
+	}
+	public void setkRSPodmioty(Set<KRSPodmiot> kRSPodmioty) {
+		this.kRSPodmioty = kRSPodmioty;
 	}
 	public EmisjaAkcji() {
 		super();
