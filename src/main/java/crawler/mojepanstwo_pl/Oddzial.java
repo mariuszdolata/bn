@@ -1,20 +1,38 @@
 package crawler.mojepanstwo_pl;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 
 @Entity
+@Table(name="oddzial")
 public class Oddzial {
 
-	@Id
-	private long id;
+
+	private Long oddzialId;
 	private String nazwa;
 	private String adres;
-	public long getId() {
-		return id;
+	private Set<KRSPodmiot> krsPodmioty = new HashSet<KRSPodmiot>(0);
+	public void setKrsPodmioty(Set<KRSPodmiot> krsPodmioty) {
+		this.krsPodmioty = krsPodmioty;
 	}
-	public void setId(long id) {
-		this.id = id;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="oddzial_id")
+	public Long getOddzialId() {
+		return oddzialId;
+	}
+	public void setOddzialId(Long oddzialId) {
+		this.oddzialId = oddzialId;
 	}
 	public String getNazwa() {
 		return nazwa;
@@ -28,15 +46,19 @@ public class Oddzial {
 	public void setAdres(String adres) {
 		this.adres = adres;
 	}
+	@ManyToMany(fetch=FetchType.LAZY, mappedBy="oddzial")
+	public Set<KRSPodmiot> getKrsPodmioty() {
+		return krsPodmioty;
+	}
+	public void setKrspodmioty(Set<KRSPodmiot> krsPodmioty) {
+		this.krsPodmioty = krsPodmioty;
+	}
+	
+	
 	@Override
 	public String toString() {
-		return "Oddzial [id=" + id + ", nazwa=" + nazwa + ", adres=" + adres + "]";
-	}
-	public Oddzial(long id, String nazwa, String adres) {
-		super();
-		this.id = id;
-		this.nazwa = nazwa;
-		this.adres = adres;
+		return "Oddzial [oddzialId=" + oddzialId + ", nazwa=" + nazwa + ", adres=" + adres + ", krspodmioty="
+				+ krsPodmioty + "]";
 	}
 	public Oddzial() {
 		super();

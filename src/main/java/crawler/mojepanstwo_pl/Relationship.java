@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,12 +18,13 @@ import javax.persistence.Table;
 @Table(name="relationship")
 public class Relationship {
 	
+	public enum RelationshipTyp  {OSOBA, PODMIOT};
 	private Long id;
 	private String type;
-	public enum startTyp  {OSOBA, PODMIOT};
 	private Long startId;
-	public enum endTyp {OSOBA, PODMIOT};
 	private Long endId;
+	private RelationshipTyp startTyp;
+	private RelationshipTyp endTyp;
 	private Set<KRSPodmiot> krsPodmioty = new HashSet<KRSPodmiot>(0);
 	
 	@Id
@@ -33,9 +36,20 @@ public class Relationship {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	
-	
+	@Enumerated(EnumType.STRING)
+	public RelationshipTyp getStartTyp() {
+		return startTyp;
+	}
+	public void setStartTyp(RelationshipTyp startTyp) {
+		this.startTyp = startTyp;
+	}
+	@Enumerated(EnumType.STRING)
+	public RelationshipTyp getEndTyp() {
+		return endTyp;
+	}
+	public void setEndTyp(RelationshipTyp endTyp) {
+		this.endTyp = endTyp;
+	}
 	public String getType() {
 		return type;
 	}
@@ -54,8 +68,7 @@ public class Relationship {
 	public void setEndId(Long endId) {
 		this.endId = endId;
 	}
-	
-	@ManyToMany(fetch=FetchType.LAZY, mappedBy="relationship")
+	@ManyToMany(fetch=FetchType.LAZY, mappedBy="relationships")
 	public Set<KRSPodmiot> getKrsPodmioty() {
 		return krsPodmioty;
 	}

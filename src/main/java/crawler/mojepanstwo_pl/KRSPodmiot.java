@@ -83,15 +83,10 @@ public class KRSPodmiot {
 	private Set<EmisjaAkcji> emisjeAkcji = new HashSet<EmisjaAkcji>();
 	private Set<Firma> firmy = new HashSet<Firma>();
 	private Set<Relationship> relationships = new HashSet<Relationship>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Reprezentacja> reprezentacja = new HashSet<Reprezentacja>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Osoba> nadzor = new HashSet<Osoba>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Oddzial> oddzial = new HashSet<Oddzial>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Osoba> komitetZalozycielski = new HashSet<Osoba>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
+	private Set<Reprezentacja> reprezentacja = new HashSet<Reprezentacja>();
+	private Set<Osoba> nadzor = new HashSet<Osoba>();
+	private Set<Oddzial> oddzial = new HashSet<Oddzial>();
+	private Set<Osoba> komitetZalozycielski = new HashSet<Osoba>();
 //	private Set<Wspolnik> wspolnicy = new HashSet<Wspolnik>();
 //	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
 //	private Set<Reprezentacja> prokurenci = new HashSet<Reprezentacja>();
@@ -489,30 +484,46 @@ public class KRSPodmiot {
 	public void setRelationships(Set<Relationship> relationships) {
 		this.relationships = relationships;
 	}
-//	public Set<Reprezentacja> getReprezentacja() {
-//		return reprezentacja;
-//	}
-//	public void setReprezentacja(Set<Reprezentacja> reprezentacja) {
-//		this.reprezentacja = reprezentacja;
-//	}
-//	public Set<Osoba> getNadzor() {
-//		return nadzor;
-//	}
-//	public void setNadzor(Set<Osoba> nadzor) {
-//		this.nadzor = nadzor;
-//	}
-//	public Set<Oddzial> getOddzial() {
-//		return oddzial;
-//	}
-//	public void setOddzial(Set<Oddzial> oddzial) {
-//		this.oddzial = oddzial;
-//	}
-//	public Set<Osoba> getKomitetZalozycielski() {
-//		return komitetZalozycielski;
-//	}
-//	public void setKomitetZalozycielski(Set<Osoba> komitetZalozycielski) {
-//		this.komitetZalozycielski = komitetZalozycielski;
-//	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_reprezentacja", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="reprezentacja_id", nullable=false, updatable=false)
+	})
+	public Set<Reprezentacja> getReprezentacja() {
+		return reprezentacja;
+	}
+	public void setReprezentacja(Set<Reprezentacja> reprezentacja) {
+		this.reprezentacja = reprezentacja;
+	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_nazdor", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="osoba_id", nullable=false, updatable=false)
+	})
+	public Set<Osoba> getNadzor() {
+		return nadzor;
+	}
+	public void setNadzor(Set<Osoba> nadzor) {
+		this.nadzor = nadzor;
+	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_oddzial", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="oddzial_id", nullable=false, updatable=false)
+	})
+	public Set<Oddzial> getOddzial() {
+		return oddzial;
+	}
+	public void setOddzial(Set<Oddzial> oddzial) {
+		this.oddzial = oddzial;
+	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_komitetzalozycielski", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="osoba_id", nullable=false, updatable=false)
+	})
+	public Set<Osoba> getKomitetZalozycielski() {
+		return komitetZalozycielski;
+	}
+	public void setKomitetZalozycielski(Set<Osoba> komitetZalozycielski) {
+		this.komitetZalozycielski = komitetZalozycielski;
+	}
 //	public Set<Wspolnik> getWspolnicy() {
 //		return wspolnicy;
 //	}
@@ -531,6 +542,7 @@ public class KRSPodmiot {
 //	public void setJedynyAkcjonariusz(Set<Osoba> jedynyAkcjonariusz) {
 //		this.jedynyAkcjonariusz = jedynyAkcjonariusz;
 //	}
+
 
 	public KRSPodmiot() {
 		super();

@@ -3,9 +3,10 @@ package crawler.mojepanstwo_pl;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="reprezentacja")
 public class Reprezentacja extends Osoba{
 
 	protected String funkcja;

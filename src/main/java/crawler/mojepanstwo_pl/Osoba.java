@@ -2,18 +2,33 @@ package crawler.mojepanstwo_pl;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SecondaryTable;
+import javax.persistence.SecondaryTables;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="osoba")
+//@SecondaryTables({@SecondaryTable(name="komitet_zalozycielski"), @SecondaryTable(name="jedyny_akcjonariusz")})
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Osoba {
 
-	@Id
+	
 	protected long id;
 	protected String nazwa;
 	protected Date dataUrodzenia;
 	protected int privacyLevel;
 	protected long osobaId;
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="osoba_id")
 	public long getId() {
 		return id;
 	}
