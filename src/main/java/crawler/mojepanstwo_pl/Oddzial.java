@@ -34,12 +34,14 @@ public class Oddzial {
 	public void setOddzialId(Long oddzialId) {
 		this.oddzialId = oddzialId;
 	}
+	@Column(columnDefinition="text")
 	public String getNazwa() {
 		return nazwa;
 	}
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
+	@Column(columnDefinition="text")
 	public String getAdres() {
 		return adres;
 	}

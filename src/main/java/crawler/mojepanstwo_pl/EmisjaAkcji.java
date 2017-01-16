@@ -52,6 +52,7 @@ public class EmisjaAkcji {
 	public void setLiczba(Long liczba) {
 		this.liczba = liczba;
 	}
+	@Column(columnDefinition="text")
 	public String getRodzajUprzywilejowania() {
 		return rodzajUprzywilejowania;
 	}

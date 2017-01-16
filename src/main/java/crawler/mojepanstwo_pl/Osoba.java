@@ -9,9 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SecondaryTable;
-import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="osoba")
@@ -35,24 +35,29 @@ public class Osoba {
 	public void setId(long id) {
 		this.id = id;
 	}
+	@Column(columnDefinition="text")
 	public String getNazwa() {
 		return nazwa;
 	}
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
+	@Temporal(TemporalType.DATE)
 	public Date getDataUrodzenia() {
 		return dataUrodzenia;
 	}
 	public void setDataUrodzenia(Date dataUrodzenia) {
-		this.dataUrodzenia = dataUrodzenia;
+		if(dataUrodzenia!=null)this.dataUrodzenia = dataUrodzenia;
+		else this.dataUrodzenia=null;
 	}
+	@Column(nullable=true)
 	public int getPrivacyLevel() {
 		return privacyLevel;
 	}
 	public void setPrivacyLevel(int privacyLevel) {
 		this.privacyLevel = privacyLevel;
 	}
+	@Column(name="osobaId", nullable=true)
 	public long getOsobaId() {
 		return osobaId;
 	}

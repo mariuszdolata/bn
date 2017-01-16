@@ -87,11 +87,9 @@ public class KRSPodmiot {
 	private Set<Osoba> nadzor = new HashSet<Osoba>();
 	private Set<Oddzial> oddzial = new HashSet<Oddzial>();
 	private Set<Osoba> komitetZalozycielski = new HashSet<Osoba>();
-//	private Set<Wspolnik> wspolnicy = new HashSet<Wspolnik>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Reprezentacja> prokurenci = new HashSet<Reprezentacja>();
-//	@ManyToMany(cascade=CascadeType.ALL, mappedBy="kRSPodmioty")
-//	private Set<Osoba> jedynyAkcjonariusz = new HashSet<Osoba>();
+	private Set<Wspolnik> wspolnicy = new HashSet<Wspolnik>();
+	private Set<Reprezentacja> prokurenci = new HashSet<Reprezentacja>();
+	private Set<Osoba> jedynyAkcjonariusz = new HashSet<Osoba>();
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="krspodmiot_id", unique=true, nullable=false)
@@ -524,24 +522,36 @@ public class KRSPodmiot {
 	public void setKomitetZalozycielski(Set<Osoba> komitetZalozycielski) {
 		this.komitetZalozycielski = komitetZalozycielski;
 	}
-//	public Set<Wspolnik> getWspolnicy() {
-//		return wspolnicy;
-//	}
-//	public void setWspolnicy(Set<Wspolnik> wspolnicy) {
-//		this.wspolnicy = wspolnicy;
-//	}
-//	public Set<Reprezentacja> getProkurenci() {
-//		return prokurenci;
-//	}
-//	public void setProkurenci(Set<Reprezentacja> prokurenci) {
-//		this.prokurenci = prokurenci;
-//	}
-//	public Set<Osoba> getJedynyAkcjonariusz() {
-//		return jedynyAkcjonariusz;
-//	}
-//	public void setJedynyAkcjonariusz(Set<Osoba> jedynyAkcjonariusz) {
-//		this.jedynyAkcjonariusz = jedynyAkcjonariusz;
-//	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_wspolnicy", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="wspolnicy_id", nullable=false, updatable=false)
+	})
+	public Set<Wspolnik> getWspolnicy() {
+		return wspolnicy;
+	}
+	public void setWspolnicy(Set<Wspolnik> wspolnicy) {
+		this.wspolnicy = wspolnicy;
+	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_prokurenci", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="prokurenci_id", nullable=false, updatable=false)
+	})
+	public Set<Reprezentacja> getProkurenci() {
+		return prokurenci;
+	}
+	public void setProkurenci(Set<Reprezentacja> prokurenci) {
+		this.prokurenci = prokurenci;
+	}
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(name="krspodmiot_jedynyakcjonariusz", joinColumns={@JoinColumn(name="krspodmiot_id", nullable=false, updatable=false)}, inverseJoinColumns={
+			@JoinColumn(name="osoba_id", nullable=false, updatable=false)
+	})
+	public Set<Osoba> getJedynyAkcjonariusz() {
+		return jedynyAkcjonariusz;
+	}
+	public void setJedynyAkcjonariusz(Set<Osoba> jedynyAkcjonariusz) {
+		this.jedynyAkcjonariusz = jedynyAkcjonariusz;
+	}
 
 
 	public KRSPodmiot() {

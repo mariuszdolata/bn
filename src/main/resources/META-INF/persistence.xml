@@ -63,7 +63,8 @@
 		</properties>
 	</persistence-unit>
 
-	<persistence-unit name="firmenwissen" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="firmenwissen"
+		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>crawler.firmenwissen_com.FirmenwissenIndex</class>
 		<class>crawler.firmenwissen_com.FirmenwissenProfil</class>
@@ -79,20 +80,20 @@
 			<property name="hibernate.connection.username" value="${database.user}" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+			<!-- <property name="hibernate.show_sql" value="true" /> -->
 			<!-- <property name="hibernate.archive.autodetection" value="class, hbm"> 
 				</property> -->
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
 	</persistence-unit>
 
-<persistence-unit name="polska" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="polska" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>dbstructure.Gmina</class>
 		<class>dbstructure.Powiat</class>
 		<class>dbstructure.PKD</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
+
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
 			<property name="hibernate.connection.password" value="${database.password}" />
@@ -103,13 +104,13 @@
 			<property name="hibernate.connection.username" value="${database.user}" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+			<!-- <property name="hibernate.show_sql" value="true" /> -->
 			<!-- <property name="hibernate.archive.autodetection" value="class, hbm"> 
 				</property> -->
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
 	</persistence-unit>
-	
+
 	<persistence-unit name="mojepanstwo" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>crawler.mojepanstwo_pl.EmisjaAkcji</class>
@@ -120,20 +121,22 @@
 		<class>crawler.mojepanstwo_pl.PKD</class>
 		<class>crawler.mojepanstwo_pl.Relationship</class>
 		<class>crawler.mojepanstwo_pl.Reprezentacja</class>
-<!-- 		<class>crawler.mojepanstwo_pl.Wspolnik</class> -->
+		<class>crawler.mojepanstwo_pl.Wspolnik</class>
+		<class>crawler.mojepanstwo_pl.ID</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-		
+
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="${database.password}" />
-			<!-- <property name="hibernate.connection.url" -->
-			<!-- value="jdbc:mysql://176.119.61.229:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" 
-				/> -->
-			<property name="hibernate.connection.url" value="${database.url}" />
-			<property name="hibernate.connection.username" value="${database.user}" />
+<!-- 			<property name="hibernate.connection.password" value="${database.password}" /> -->
+<property name="hibernate.connection.password" value="mojepanstwo" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/mojepanstwo?useTimezone=true&amp;serverTimezone=GMT" />
+<!-- 			<property name="hibernate.connection.url" value="${database.url}" /> -->
+<!-- 			<property name="hibernate.connection.username" value="${database.user}" /> -->
+<property name="hibernate.connection.username" value="mojepanstwo" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+			<!-- <property name="hibernate.show_sql" value="true" /> -->
 			<!-- <property name="hibernate.archive.autodetection" value="class, hbm"> 
 				</property> -->
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->

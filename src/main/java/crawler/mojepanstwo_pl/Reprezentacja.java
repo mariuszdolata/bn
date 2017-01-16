@@ -2,15 +2,18 @@ package crawler.mojepanstwo_pl;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="reprezentacja")
+//@Inheritance(strategy=InheritanceType.JOINED)
 public class Reprezentacja extends Osoba{
 
 	protected String funkcja;
 
+	@Column(columnDefinition="text")
 	public String getFunkcja() {
 		return funkcja;
 	}
