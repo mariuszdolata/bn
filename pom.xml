@@ -71,7 +71,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>crawler.mojepanstwo_pl.StartMojePanstwoKRSPodmiot</mainClass>
+							<mainClass>crawler.mojepanstwo_pl.StartMojePanstwoZamowieniaPubliczne</mainClass>
 							<!-- <mainClass>crawler.znanefirmy_com.StartZnanefirmy</mainClass> -->
 						</manifest>
 					</archive>

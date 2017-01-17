@@ -9,9 +9,9 @@ import javax.persistence.TypedQuery;
 
 import crawler.api.DatabaseAccess;
 
-public class MojePanstwoKRSPodmiotRepository extends DatabaseAccess implements Runnable {
+public class MojePanstwoZamowieniaPubliczneRepository extends DatabaseAccess implements Runnable {
 
-	public MojePanstwoKRSPodmiotRepository(int threadId, Properties properties,
+	public MojePanstwoZamowieniaPubliczneRepository(int threadId, Properties properties,
 			EntityManagerFactory entityManagerFactory) {
 		super(threadId, properties, entityManagerFactory);
 		// TODO Auto-generated constructor stub
@@ -24,7 +24,7 @@ public class MojePanstwoKRSPodmiotRepository extends DatabaseAccess implements R
 			EntityManager em = StartMojePanstwoKRSPodmiot.entityManagerFactory.createEntityManager();
 			//KRS powinno zawierac sie w przedziale <1, 700k) - sprawdz po scrapingu slusznosc tego wpisu
 			TypedQuery<ID> q = em
-					.createQuery("SELECT i FROM ID i WHERE id <700000 AND status_krspodmiot is null ORDER BY rand()", ID.class)
+					.createQuery("SELECT i FROM ID i WHERE id <2000000 AND status_zamowieniepubliczne is null ORDER BY rand()", ID.class)
 					.setMaxResults(50);
 			List<ID> lista = q.getResultList();
 			if (!lista.isEmpty())
@@ -32,16 +32,16 @@ public class MojePanstwoKRSPodmiotRepository extends DatabaseAccess implements R
 			for (ID i : lista) {
 				em.getTransaction().begin();
 				logger.info("ID i=" + i.toString());
-				MojePanstwoKRSPodmiotGet getProfil1 = new MojePanstwoKRSPodmiotGet(1, this.getProperties(),
-						this.getEntityManagerFactory(), "https://api-v3.mojepanstwo.pl/dane/krs_podmioty/" + i.getId()
-								+ ".json?layers[]=dzialalnosci&layers[]=emisje_akcji&layers[]=firmy&layers[]=graph&layers[]=jedynyAkcjonariusz&layers[]=komitetZalozycielski&layers[]=reprezentacja&layers[]=nadzor&layers[]=oddzialy&layers[]=prokurenci&layers[]=wspolnicy");
+				MojePanstwoZamowieniaPubliczneGet getZamowienia = new MojePanstwoZamowieniaPubliczneGet(this.getThreadId(), this.getProperties(),
+						this.getEntityManagerFactory(), "https://api-v3.mojepanstwo.pl/dane/zamowienia_publiczne/"+i.getId());
 
-				i.setStatus_krspodmiot(Integer.toString(getProfil1.getStatusCode()));
+				i.setStatus_zamowieniepubliczne(Integer.toString(getZamowienia.getStatusCode()));
 				em.getTransaction().commit();
 			}
 			em.close();
 		} while (listToScrape);
 
+		
 	}
 
 }

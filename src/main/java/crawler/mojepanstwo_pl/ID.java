@@ -13,7 +13,9 @@ import com.google.common.base.Strings;
 public class ID {
 	private int id;
 	private String krs;
-	private String status;
+	private String status_krspodmiot;
+	private String status_osoba;
+	private String status_zamowieniepubliczne;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -22,22 +24,37 @@ public class ID {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
 	
+	
+	public String getStatus_krspodmiot() {
+		return status_krspodmiot;
+	}
+	public void setStatus_krspodmiot(String status_krspodmiot) {
+		this.status_krspodmiot = status_krspodmiot;
+	}
+	public String getStatus_osoba() {
+		return status_osoba;
+	}
+	public void setStatus_osoba(String status_osoba) {
+		this.status_osoba = status_osoba;
+	}
 	public String getKrs() {
 		return krs;
 	}
 	public void setKrs(String krs) {
 		this.krs = krs;
 	}
+	
+	public String getStatus_zamowieniepubliczne() {
+		return status_zamowieniepubliczne;
+	}
+	public void setStatus_zamowieniepubliczne(String status_zamowieniepubliczne) {
+		this.status_zamowieniepubliczne = status_zamowieniepubliczne;
+	}
 	@Override
 	public String toString() {
-		return "ID [id=" + id + ", status=" + status + "]";
+		return "ID [id=" + id + ", krs=" + krs + ", status_krspodmiot=" + status_krspodmiot + ", status_osoba="
+				+ status_osoba + "]";
 	}
 	public ID() {
 	}

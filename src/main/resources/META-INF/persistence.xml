@@ -123,6 +123,10 @@
 		<class>crawler.mojepanstwo_pl.Reprezentacja</class>
 		<class>crawler.mojepanstwo_pl.Wspolnik</class>
 		<class>crawler.mojepanstwo_pl.ID</class>
+		<class>crawler.mojepanstwo_pl.KRSOsoba</class>
+		<class>crawler.mojepanstwo_pl.KRSOsobaGmina</class>
+		<class>crawler.mojepanstwo_pl.Stanowisko</class>
+		<class>crawler.mojepanstwo_pl.ZamowieniaPubliczne</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 		<properties>
