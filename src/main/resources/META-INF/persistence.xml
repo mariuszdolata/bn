@@ -127,6 +127,7 @@
 		<class>crawler.mojepanstwo_pl.KRSOsobaGmina</class>
 		<class>crawler.mojepanstwo_pl.Stanowisko</class>
 		<class>crawler.mojepanstwo_pl.ZamowieniaPubliczne</class>
+		<class>crawler.mojepanstwo_pl.entites.ZamowieniaPubliczneZamawiajacy</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 		<properties>

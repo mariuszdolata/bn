@@ -117,7 +117,13 @@ public class ScrapeClass extends DatabaseAccess {
 	public void insertDataEntity(Object o){
 		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
-		entityManager.persist(o);
+		try{
+			entityManager.persist(o);			
+		}catch(Exception e){
+			logger.error(e.getCause());
+			logger.error(e.getMessage());
+			logger.error(e.getStackTrace());
+		}
 		entityManager.getTransaction().commit();
 		entityManager.close();
 	}
