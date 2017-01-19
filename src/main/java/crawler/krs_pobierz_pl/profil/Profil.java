@@ -1,19 +1,25 @@
 package crawler.krs_pobierz_pl.profil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class Profil {
-	@Id
-	@GeneratedValue
+	
 	private long id;
 
 	private String nazwa;
@@ -36,22 +42,21 @@ public class Profil {
 	private String email;
 	private String ostatniaAktualizacjaDanych;
 	private String meta;
-	private String idHost;
-	private String idThread;
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "company_id")
-	private List<Osoba> osoby = new ArrayList<Osoba>();
+	private int idHost;
+	private int idThread;
+	private Date data;
 
 	
-	public String getIdThread() {
-		return idThread;
-	}
-
-	public void setIdThread(String idThread) {
+	public void setIdThread(int idThread) {
 		this.idThread = idThread;
 	}
 
+	private List<Osoba> osoby = new ArrayList<Osoba>();
+
+	
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	public long getId() {
 		return id;
 	}
@@ -59,7 +64,7 @@ public class Profil {
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getNazwa() {
 		return nazwa;
 	}
@@ -67,7 +72,7 @@ public class Profil {
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getKrs() {
 		return krs;
 	}
@@ -75,7 +80,7 @@ public class Profil {
 	public void setKrs(String krs) {
 		this.krs = krs;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getNip() {
 		return nip;
 	}
@@ -83,7 +88,7 @@ public class Profil {
 	public void setNip(String nip) {
 		this.nip = nip;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getRegon() {
 		return regon;
 	}
@@ -91,7 +96,7 @@ public class Profil {
 	public void setRegon(String regon) {
 		this.regon = regon;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getKapitalZakladowy() {
 		return kapitalZakladowy;
 	}
@@ -99,7 +104,7 @@ public class Profil {
 	public void setKapitalZakladowy(String kapitalZakladowy) {
 		this.kapitalZakladowy = kapitalZakladowy;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getFormaPrawna() {
 		return formaPrawna;
 	}
@@ -107,7 +112,7 @@ public class Profil {
 	public void setFormaPrawna(String formaPrawna) {
 		this.formaPrawna = formaPrawna;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getAdresLinia1() {
 		return adresLinia1;
 	}
@@ -115,7 +120,7 @@ public class Profil {
 	public void setAdresLinia1(String adresLinia1) {
 		this.adresLinia1 = adresLinia1;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getAdresLinia2() {
 		return adresLinia2;
 	}
@@ -123,7 +128,7 @@ public class Profil {
 	public void setAdresLinia2(String adresLinia2) {
 		this.adresLinia2 = adresLinia2;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getWojewodztwo() {
 		return wojewodztwo;
 	}
@@ -131,7 +136,7 @@ public class Profil {
 	public void setWojewodztwo(String wojewodztwo) {
 		this.wojewodztwo = wojewodztwo;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getDataRejestracjiKrs() {
 		return dataRejestracjiKrs;
 	}
@@ -139,7 +144,7 @@ public class Profil {
 	public void setDataRejestracjiKrs(String dataRejestracjiKrs) {
 		this.dataRejestracjiKrs = dataRejestracjiKrs;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getOstatniaZmianaKrs() {
 		return ostatniaZmianaKrs;
 	}
@@ -147,7 +152,7 @@ public class Profil {
 	public void setOstatniaZmianaKrs(String ostatniaZmianaKrs) {
 		this.ostatniaZmianaKrs = ostatniaZmianaKrs;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getReprezentacja() {
 		return reprezentacja;
 	}
@@ -155,7 +160,7 @@ public class Profil {
 	public void setReprezentacja(String reprezentacja) {
 		this.reprezentacja = reprezentacja;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getSposobReprezentacji() {
 		return sposobReprezentacji;
 	}
@@ -163,7 +168,7 @@ public class Profil {
 	public void setSposobReprezentacji(String sposobReprezentacji) {
 		this.sposobReprezentacji = sposobReprezentacji;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getSad() {
 		return sad;
 	}
@@ -171,7 +176,7 @@ public class Profil {
 	public void setSad(String sad) {
 		this.sad = sad;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getSygnatura() {
 		return sygnatura;
 	}
@@ -179,7 +184,7 @@ public class Profil {
 	public void setSygnatura(String sygnatura) {
 		this.sygnatura = sygnatura;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getPrzewazajacaDzialalnoscGospodarcza() {
 		return przewazajacaDzialalnoscGospodarcza;
 	}
@@ -187,7 +192,7 @@ public class Profil {
 	public void setPrzewazajacaDzialalnoscGospodarcza(String przewazajacaDzialalnoscGospodarcza) {
 		this.przewazajacaDzialalnoscGospodarcza = przewazajacaDzialalnoscGospodarcza;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getWebsite() {
 		return website;
 	}
@@ -195,7 +200,7 @@ public class Profil {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getEmail() {
 		return email;
 	}
@@ -204,6 +209,8 @@ public class Profil {
 		this.email = email;
 	}
 
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "company_id")
 	public List<Osoba> getOsoby() {
 		return osoby;
 	}
@@ -228,13 +235,38 @@ public class Profil {
 		this.meta = meta;
 	}
 
-	public String getIdHost() {
+	public int getIdHost() {
 		return idHost;
 	}
 
-	public void setIdHost(String idHost) {
+	public void setIdHost(int idHost) {
 		this.idHost = idHost;
 	}
+
+	public int getIdThread() {
+		return idThread;
+	}
+
+	public void idThread(int idThread) {
+		this.idThread = idThread;
+	}
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public Profil() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+
+	
 	
 	
 

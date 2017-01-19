@@ -9,8 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HTMLParserListener;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
@@ -73,7 +73,7 @@ public class ScrapeClass extends DatabaseAccess {
 	 */
 	public HtmlPage getPage(String url){
 		WebClient client = new WebClient();
-//		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
+		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
 		try {
 			logger.info("WYKONANIE getPage("+url+")");
 			return client.getPage(url);
@@ -118,7 +118,8 @@ public class ScrapeClass extends DatabaseAccess {
 		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		try{
-			entityManager.persist(o);			
+			entityManager.persist(o);	
+			logger.info("zapisano obiekt klasy "+o.getClass().getName());
 		}catch(Exception e){
 			logger.error(e.getCause());
 			logger.error(e.getMessage());

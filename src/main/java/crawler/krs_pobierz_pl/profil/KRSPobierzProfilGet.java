@@ -1,6 +1,7 @@
 package crawler.krs_pobierz_pl.profil;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -11,7 +12,10 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class GetProfile {
+import crawler.api.Scrape;
+import crawler.api.ScrapeClass;
+
+public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 	private String urlToScrape;
 	private String idHost;
 
@@ -23,40 +27,66 @@ public class GetProfile {
 		this.urlToScrape = urlToScrape;
 	}
 
-	public GetProfile(String urlToScrape, String idHost, String idThread) {
+	public KRSPobierzProfilGet(int idThread, Properties properties, EntityManagerFactory entityManagerFactory,
+			String urlToScrape) {
 
-		this.idHost = idHost;
+		super(idThread, properties, entityManagerFactory);
 		this.urlToScrape = urlToScrape;
+		logger.info("pobieranie strony...");
+		this.setCurrentPage(this.getPage(this.getUrlToScrape()));
+		logger.info("ustawianie statusCode");
+		this.setStatusCode(this.getCurrentPage().getWebResponse().getStatusCode());
+		logger.info("sprawdzanie czy status code==200, statusCode="+this.getStatusCode());
+		
+		if (this.getStatusCode() == 200) {
+			this.parsing(idThread);
+		} else
+		    
+			logger.warn("STATUS=" + this.getStatusCode());
+
+	}
+
+	public List<String> fetchUrlsToScrape() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void parsing(int idThread) {
 		Profil mainProfil = new Profil();
-		mainProfil.setIdHost(this.getIdHost());
+		mainProfil.setIdHost(Integer.parseInt(properties.getProperty("idHost")));
 		mainProfil.setIdThread(idThread);
 		try {
-			WebClient client = new WebClient();
-			HtmlPage mainPage = client.getPage(urlToScrape);
-			String htmlCode = mainPage.asText();
+//			WebClient client = new WebClient();
+//			HtmlPage mainPage = client.getPage(urlToScrape);
+//			String htmlCode = mainPage.asText();
+			String htmlCode = this.getCurrentPage().asText();
+			HtmlPage mainPage = this.getCurrentPage();
+			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+			logger.info(this.getCurrentPage().asXml());
 			DomElement contactData = mainPage.getElementById("contactData");
 			DomElement basicDataTable = mainPage.getElementById("basicDataTable");
 			DomElement pageHeader = mainPage.getFirstByXPath("//div[@class=\"page-header\"]");
 			List<Object> osoby = (List<Object>) mainPage
 					.getByXPath("//tr[@itemtype=\"http://data-vocabulary.org/Person\"]");
-			
-			String [] header;
+
+			String[] header;
 			String[] basicDataTableLines;
 			String[] contactDataLines;
-			try{
-				 header = pageHeader.asText().split("\n");
-				 basicDataTableLines = basicDataTable.asText().split("\n");
-				 contactDataLines = contactData.asText().split("\n");
-			}catch(Exception e){
-				System.err.println("M:prawdopodobnie nie pobralo kodu zrodlowego dla strony "+urlToScrape);
+			try {
+				header = pageHeader.asText().split("\n");
+				basicDataTableLines = basicDataTable.asText().split("\n");
+				contactDataLines = contactData.asText().split("\n");
+			} catch (Exception e) {
+				System.err.println("M:prawdopodobnie nie pobralo kodu zrodlowego dla strony " + urlToScrape);
 				header = new String[1];
-				header[0]="";
-				 basicDataTableLines = new String[1];
-				basicDataTableLines[0]="";
+				header[0] = "";
+				basicDataTableLines = new String[1];
+				basicDataTableLines[0] = "";
 				contactDataLines = new String[1];
-				contactDataLines[0]="";
+				contactDataLines[0] = "";
 			}
-			
+
 			for (int i = 0; i < contactDataLines.length; i++) {
 				if (contactDataLines[i].contains("Adres strony WWW:"))
 					mainProfil.setWebsite(contactDataLines[i].substring(18));
@@ -124,30 +154,57 @@ public class GetProfile {
 				}
 			}
 			if (mainProfil.getNazwa().length() > 2) {
-				EntityManagerFactory entityManagerFactory = Persistence
-						.createEntityManagerFactory("crawling_krs_pobierz_pl_profil");
-				EntityManager entityManager = entityManagerFactory.createEntityManager();
+
+				EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 				entityManager.getTransaction().begin();
 				entityManager.persist(mainProfil);
 				entityManager.getTransaction().commit();
 				entityManager.close();
-				entityManagerFactory.close();
 			}
-			// System.out.println(elementStr);
 		} catch (Exception e) {
 			System.err.println("M: problem z wczytaniem strony");
 			e.printStackTrace();
 		}
-		// nie ³¹czy siê z baz¹ w przypadku NULL
-		
 	}
 
-	public String getIdHost() {
-		return idHost;
+	public Boolean insertData(Object objectToInsert) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public void setIdHost(String idHost) {
-		this.idHost = idHost;
+	public void supportFetchUrlsToScrape() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void supportGetPage() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void supportParsing() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void supportInsertData() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mainProcess() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void logger() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Object parsing(HtmlPage page, Object mainProfil) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

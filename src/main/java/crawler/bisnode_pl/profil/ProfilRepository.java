@@ -55,7 +55,7 @@ public class ProfilRepository extends MainCrawler implements Runnable {
 		}
 //		String urlTemp="http://www.bisnode.pl/firma/?id=1926254&nazwa=ORGANIKA_CZ%C4%98_STOCHOWA_SP_Z_O_O";
 //		this.delay();
-//		GetProfile getProfile = new GetProfile(urlTemp);
+//		KRSPobierzProfilGet getProfile = new KRSPobierzProfilGet(urlTemp);
 
 	}
 	private boolean checkProfile() throws SQLException {

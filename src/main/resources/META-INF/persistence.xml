@@ -2,16 +2,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 	version="2.0">
-	<persistence-unit name="crawling_krs_pobierz_pl_profil"
+	<persistence-unit name="krs_pobierz_pl_profil"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>crawler.krs_pobierz_pl.profil.KRSProfilIndex</class>
+		<class>crawler.krs_pobierz_pl.profil.Osoba</class>
+		<class>crawler.krs_pobierz_pl.profil.Profil</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="haslo" />
+			<property name="hibernate.connection.password" value="krspobierz" />
 			<property name="hibernate.connection.url"
-				value="jdbc:mysql://176.119.61.229:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT" />
+				value="jdbc:mysql://localhost:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT" />
 
-			<property name="hibernate.connection.username" value="java" />
+			<property name="hibernate.connection.username" value="krspobierz" />
 			<property name="hibernate.default_schema" value="krs_pobierz_pl_profil" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
@@ -129,6 +133,8 @@
 		<class>crawler.mojepanstwo_pl.ZamowieniaPubliczne</class>
 		<class>crawler.mojepanstwo_pl.entites.ZamowieniaPubliczneZamawiajacy</class>
 		<class>crawler.mojepanstwo_pl.entites.DotacjeUE</class>
+		<class>crawler.mojepanstwo_pl.entites.Instytucje</class>
+		<class>crawler.mojepanstwo_pl.entites.Patenty</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 		<properties>

@@ -49,7 +49,7 @@ public class KRSProfil extends MainCrawler implements Scrape {
 
 	public List<String> fetchUrlsToScrape() {
 		ApplicationContext context = new AnnotationConfigApplicationContext(DatabaseConfig.class);
-		KrspobierzProfilRepository profilRepository = context.getBean("profilRepository", KrspobierzProfilRepository.class);
+		KrspobierzBean profilRepository = context.getBean("profilRepository", KrspobierzBean.class);
 		List<String> urlsToScrape = new ArrayList<String>();
 		return urlsToScrape;
 	}
@@ -208,7 +208,7 @@ public class KRSProfil extends MainCrawler implements Scrape {
 				Profil profil = (Profil)this.parsing(this.currentPage);
 				if(this.insertData(profil)) System.out.println("zapisano obiekt");
 				else System.out.println("Nie zapisano obiektu");
-//				GetProfile getProfile = new GetProfile(this.urlsToScrape.get(i), idHost);
+//				KRSPobierzProfilGet getProfile = new KRSPobierzProfilGet(this.urlsToScrape.get(i), idHost);
 				System.gc();
 			}
 		} while (!this.urlsToScrape.isEmpty());

@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class KrspobierzProfilRepository {
+public class KrspobierzBean {
 
 	private JdbcTemplate jdbcTemplate;
 	@Autowired

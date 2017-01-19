@@ -96,7 +96,7 @@ public class MojePanstwoDotacjeUEGet extends ScrapeClass implements Scrape {
 			if (data.has("dotacje_ue.wartosc_dofinansowanie")
 					&& !data.get("dotacje_ue.wartosc_dofinansowanie").isJsonNull())
 				d.setWartoscDofinansowania(data.get("dotacje_ue.wartosc_dofinansowanie").getAsBigDecimal());
-			logger.info("Dotacja =>"+d.toString());
+//			logger.info("Dotacja =>"+d.toString());
 			try{
 				this.insertDataEntity(d);
 			}catch(Exception e){

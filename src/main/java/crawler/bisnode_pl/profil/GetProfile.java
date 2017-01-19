@@ -54,7 +54,7 @@ public class GetProfile implements Scrape {
 	}
 	public GetProfile(String urlToScrape, Properties properties){
 		this.setProperties(properties);
-		System.out.println("Konstruktor GetProfile dla url="+urlToScrape);
+		System.out.println("Konstruktor KRSPobierzProfilGet dla url="+urlToScrape);
 		this.urlToScrape=urlToScrape;
 		try{
 			this.currentPage = this.getPage(urlToScrape);

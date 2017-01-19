@@ -16,6 +16,7 @@ public class ID {
 	private String status_krspodmiot;
 	private String status_osoba;
 	private String status_zamowieniepubliczne;
+	private String status_patenty;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getId() {
@@ -43,13 +44,18 @@ public class ID {
 	}
 	public void setKrs(String krs) {
 		this.krs = krs;
-	}
-	
+	}	
 	public String getStatus_zamowieniepubliczne() {
 		return status_zamowieniepubliczne;
 	}
 	public void setStatus_zamowieniepubliczne(String status_zamowieniepubliczne) {
 		this.status_zamowieniepubliczne = status_zamowieniepubliczne;
+	}
+	public String getStatus_patenty() {
+		return status_patenty;
+	}
+	public void setStatus_patenty(String status_patenty) {
+		this.status_patenty = status_patenty;
 	}
 	@Override
 	public String toString() {
