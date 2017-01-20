@@ -64,6 +64,9 @@ public class ScrapeClass extends DatabaseAccess {
 	
 	public ScrapeClass(int threadId, Properties properties, EntityManagerFactory entityManagerFactory){
 		super(threadId, properties, entityManagerFactory);
+		this.setProperties(properties);
+		this.setEntityManagerFactoryl(entityManagerFactory);
+		this.setThreadId(threadId);
 	}
 	/**
 	 * Metoda pobiera stronê www o adresie String url. Jeœli konieczne jest wy³¹czenie javaScript lub jakiekolwiek inne ustawienie obiektu client klasy WebClient

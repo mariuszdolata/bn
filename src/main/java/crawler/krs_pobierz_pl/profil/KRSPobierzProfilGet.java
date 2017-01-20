@@ -1,12 +1,15 @@
 package crawler.krs_pobierz_pl.profil;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -32,18 +35,77 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 
 		super(idThread, properties, entityManagerFactory);
 		this.urlToScrape = urlToScrape;
+		// this.testStrony();
 		logger.info("pobieranie strony...");
 		this.setCurrentPage(this.getPage(this.getUrlToScrape()));
 		logger.info("ustawianie statusCode");
 		this.setStatusCode(this.getCurrentPage().getWebResponse().getStatusCode());
-		logger.info("sprawdzanie czy status code==200, statusCode="+this.getStatusCode());
-		
+		logger.info("sprawdzanie czy status code==200, statusCode=" + this.getStatusCode());
+
 		if (this.getStatusCode() == 200) {
 			this.parsing(idThread);
 		} else
-		    
+
 			logger.warn("STATUS=" + this.getStatusCode());
 
+	}
+
+	@Override
+	public HtmlPage getPage(String url) {
+		WebClient client = new WebClient();
+		client.getOptions().setThrowExceptionOnScriptError(false);
+//		client.setJavaScriptTimeout(100);
+		// client.getOptions().setJavaScriptEnabled(true);
+		logger.info("proba pobrania strony URL=" + this.getUrlToScrape());
+		try {
+			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+			return client.getPage(this.getUrlToScrape());
+		} catch (FailingHttpStatusCodeException e) {
+			// TODO Auto-generated catch block
+			logger.error("FailingHtmlStatusCodeException");
+			e.printStackTrace();
+			return null;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			logger.error("MalformedURLException");
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			logger.error("IOException");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void testStrony() {
+		WebClient client = new WebClient();
+		client.getOptions().setThrowExceptionOnScriptError(false);
+		
+		logger.info("proba pobrania strony URL=" + this.getUrlToScrape());
+		try {
+			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+			HtmlPage page = client.getPage(this.getUrlToScrape());
+			logger.info("udalo sie pobraæ stronê");
+			logger.info("statusCode=" + page.getWebResponse().getStatusCode());
+			logger.info("statusMessage=" + page.getWebResponse().getStatusMessage());
+			logger.info("HTML CODE=" + page.getWebResponse().getContentAsString());
+			logger.info("HTML CODE dlugosc=" + page.getWebResponse().getContentAsString().length());
+		} catch (FailingHttpStatusCodeException e) {
+			// TODO Auto-generated catch block
+			logger.error("FailingHtmlStatusCodeException");
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			logger.error("MalformedURLException");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			logger.error("IOException");
+			e.printStackTrace();
+		}
 	}
 
 	public List<String> fetchUrlsToScrape() {
@@ -56,14 +118,10 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 		mainProfil.setIdHost(Integer.parseInt(properties.getProperty("idHost")));
 		mainProfil.setIdThread(idThread);
 		try {
-//			WebClient client = new WebClient();
-//			HtmlPage mainPage = client.getPage(urlToScrape);
-//			String htmlCode = mainPage.asText();
 			String htmlCode = this.getCurrentPage().asText();
 			HtmlPage mainPage = this.getCurrentPage();
 			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
-			logger.info(this.getCurrentPage().asXml());
 			DomElement contactData = mainPage.getElementById("contactData");
 			DomElement basicDataTable = mainPage.getElementById("basicDataTable");
 			DomElement pageHeader = mainPage.getFirstByXPath("//div[@class=\"page-header\"]");
@@ -93,14 +151,15 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 				if (contactDataLines[i].contains("Adres email:	"))
 					mainProfil.setEmail(contactDataLines[i].substring(13));
 			}
-			for (int i = 0; i < header.length; i++) {
-				System.out.println("Header(" + i + ")" + header[i]);
-			}
 			mainProfil.setMeta(urlToScrape);
 			mainProfil.setNazwa(header[0]);
-			mainProfil.setOstatniaAktualizacjaDanych(header[1]);
+			try{
+				
+			
+			header[1]=header[1].replaceAll("Ostatnia aktualizacja danych: ", "");
+			mainProfil.setDataOstatniaAktualizacjaDanychStr(header[1]);
+			mainProfil.setDataOstatniaAktualizacjaDanych(this.getDateFormat(header[1]));
 			for (int i = 0; i < basicDataTableLines.length; i++) {
-				System.out.println(basicDataTableLines[i] + " <<<");
 
 				if (basicDataTableLines[i].contains("KRS:	"))
 					mainProfil.setKrs(basicDataTableLines[i].substring(5));
@@ -117,10 +176,26 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 					mainProfil.setAdresLinia2(basicDataTableLines[i + 1]);
 					mainProfil.setWojewodztwo(basicDataTableLines[i + 2]);
 				}
-				if (basicDataTableLines[i].contains("Data rejestracji KRS	"))
-					mainProfil.setDataRejestracjiKrs(basicDataTableLines[i].substring(21));
-				if (basicDataTableLines[i].contains("Ostatnia zmiana w KRS	"))
-					mainProfil.setOstatniaZmianaKrs(basicDataTableLines[i].substring(22));
+				if (basicDataTableLines[i].contains("Data rejestracji KRS	")) {
+					mainProfil.setDataRejestracjiKrsStr(basicDataTableLines[i].substring(21));
+					mainProfil.setDataRejestracjiKrs(this.getDateFormat(basicDataTableLines[i].substring(21)));
+
+				}
+				if (basicDataTableLines[i].contains("Ostatnia zmiana w KRS	")) {
+					mainProfil.setDataOstatniaZmianaKrsStr(basicDataTableLines[i].substring(22));
+					mainProfil.setDataOstatniaZmianaKrs(this.getDateFormat(basicDataTableLines[i].substring(22)));
+//					logger.info("ostatnia zmiana KRS DATA="+mainProfil.getDataOstatniaZmianaKrs());
+				}
+				if (basicDataTableLines[i].contains("Data rejestracji Regon")) {
+					mainProfil.setDataRejestrtacjiRegonStr(basicDataTableLines[i].substring(23));
+					String test = basicDataTableLines[i].substring(23);
+//					logger.info("Data rejestracji regon:");
+//					for(int a=0;a<test.length();a++){
+//						logger.info("TEST="+test.charAt(a));
+//					}
+					mainProfil.setDataRejestrtacjiRegon(this.getDateFormat(basicDataTableLines[i].substring(23)));
+//					logger.info("Data rejestracji regon="+mainProfil.getDataRejestrtacjiRegonStr()+"\nData="+mainProfil.getDataRejestrtacjiRegon());
+				}
 				if (basicDataTableLines[i].contains("Reprezentacja	"))
 					mainProfil.setReprezentacja(basicDataTableLines[i].substring(13));
 				if (basicDataTableLines[i].contains("Sposób reprezentacji	"))
@@ -131,28 +206,48 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 					mainProfil.setSygnatura(basicDataTableLines[i].substring(10));
 				if (basicDataTableLines[i].contains("Przewa¿aj¹ca dzia³alnoœæ gospodarcza	"))
 					mainProfil.setPrzewazajacaDzialalnoscGospodarcza(basicDataTableLines[i].substring(37));
-				System.out.println(mainPage.asText());
-
-				System.out.println("Koniec");
 
 			}
-			List<DomNode> osobyNode = (List<DomNode>) mainPage.getByXPath("//th[@itemprop=\"name\"]");
+//			List<DomNode> osobyNode = (List<DomNode>) mainPage.getByXPath("//th[@itemprop=\"name\"]");
+			List<DomNode> osobyNode = (List<DomNode>) mainPage.getByXPath("//tr[@itemtype=\"http://data-vocabulary.org/Person\"]/th[@itemprop=\"name\"]");
+			List<DomNode> onlyPersonNode = (List<DomNode>)mainPage.getByXPath("//tr[@itemtype=\"http://data-vocabulary.org/Person\"]/th[@itemprop=\"name\"]");
 			List<DomNode> osobyRole = (List<DomNode>) mainPage.getByXPath("//div[@itemprop=\"role\"]");
 			List<DomNode> osobyAffil = (List<DomNode>) mainPage.getByXPath("//td/span[@style=\"display:none\"]");
-			for (int iter = 0; iter < osobyNode.size(); iter++) {
-				System.out.println("OsobyNode.size()=" + osobyNode.size());
-				System.out.println("osoba= " + osobyNode.get(iter).asText() + ", stanowisko= "
-						+ osobyRole.get(iter).asText() + ", affil= " + osobyAffil.get(iter).asText());
-				// String danePersonalne=
-				String[] imieNazwisko = osobyNode.get(iter).asText().toString().split(" ");
-				if (imieNazwisko.length >= 2) {
-					mainProfil.getOsoby()
-							.add(new Osoba(imieNazwisko[0], imieNazwisko[1], osobyRole.get(iter).asText()));
-				} else {
-					mainProfil.getOsoby()
-							.add(new Osoba("", osobyNode.get(iter).asText(), osobyRole.get(iter).asText()));
+
+//			logger.info(mainProfil.toString());
+//			for(DomNode d: onlyPersonNode) logger.info("PERSON>>"+d.getTextContent());
+			try {
+				for (int iter = 0; iter < osobyNode.size(); iter++) {
+//					System.out.println("OsobyNode.size()=" + osobyNode.size());
+//					System.out.println("osoba= " + osobyNode.get(iter).asText() + ", stanowisko= "
+//							+ osobyRole.get(iter).asText() + ", affil= " + osobyAffil.get(iter).asText());
+					// String danePersonalne=
+					String[] imieNazwisko = osobyNode.get(iter).asText().toString().split(" ");
+					if (imieNazwisko.length >= 2) {
+						mainProfil.getOsoby()
+								.add(new Osoba(imieNazwisko[0], imieNazwisko[1], osobyRole.get(iter).asText()));
+					} else {
+						mainProfil.getOsoby()
+								.add(new Osoba("", osobyNode.get(iter).asText(), osobyRole.get(iter).asText()));
+					}
 				}
+			} catch (IndexOutOfBoundsException e) {
+				logger.info("Liczba elementow:\nosobyNode=" + osobyNode.size() + "\nosobyRole=" + osobyRole.size()
+						+ "\nosobyAffil=" + osobyAffil.size());
+//				logger.info("osobyNode:");
+//				for (DomNode node : osobyNode)
+//					logger.info(node.asText());
+//				logger.info("osobyRole:");
+//				for (DomNode node : osobyRole)
+//					logger.info(node.asText());
+//				logger.info("osobyAffil:");
+//				for (DomNode node : osobyAffil)
+//					logger.info(node.asText());
+				logger.error("prawdopodobnie brak spojnosci danych FIRM oraz OSOB!");
+				logger.error(e.getMessage());
+				logger.error(e.getCause());
 			}
+
 			if (mainProfil.getNazwa().length() > 2) {
 
 				EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
@@ -162,9 +257,54 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 				entityManager.close();
 			}
 		} catch (Exception e) {
-			System.err.println("M: problem z wczytaniem strony");
+			logger.error("M: problem z wczytaniem strony");
+			logger.error(e.getMessage());
+			logger.error(e.getCause());
 			e.printStackTrace();
 		}
+		}catch(Exception e){
+			logger.error("prawdopodobnie BAN!");
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public Date getDateFormat(String str) {
+		str = str.replaceAll("\r", "");
+//		logger.info("Data text = " + str);
+		String[] strTab = str.split(" ");
+//		for (String s : strTab)
+//			logger.info("linia=" + s + "<<");
+		if (strTab.length >= 3) {
+			switch (strTab[1]) {
+			case "stycznia":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 0, Integer.parseInt(strTab[0]));
+			case "lutego":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 1, Integer.parseInt(strTab[0]));
+			case "marca":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 2, Integer.parseInt(strTab[0]));
+			case "kwietnia":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 3, Integer.parseInt(strTab[0]));
+			case "maja":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 4, Integer.parseInt(strTab[0]));
+			case "czerwca":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 5, Integer.parseInt(strTab[0]));
+			case "lipca":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 6, Integer.parseInt(strTab[0]));
+			case "sierpnia":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 7, Integer.parseInt(strTab[0]));
+			case "wrzeœnia":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 8, Integer.parseInt(strTab[0]));
+			case "paŸdziernika":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 9, Integer.parseInt(strTab[0]));
+			case "listopada":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 10, Integer.parseInt(strTab[0]));
+			case "grudnia":
+				return new Date(Integer.parseInt(strTab[2]) - 1900, 11, Integer.parseInt(strTab[0]));
+			}
+		} else
+			return null;
+		return null;
+
 	}
 
 	public Boolean insertData(Object objectToInsert) {

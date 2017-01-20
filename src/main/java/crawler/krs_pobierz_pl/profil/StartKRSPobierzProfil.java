@@ -33,7 +33,7 @@ public class StartKRSPobierzProfil extends StartCrawler {
 		if (!properties.getProperty("test_level1").contains("1")) {
 			logger.info("Pominiêto sesjê testow¹");
 			if (properties.getProperty("level1").contains("1")) {
-				logger.info("level 1 - scraping - Patenty");
+				logger.info("level 1 - scraping - KRS_POBIERZ >> profil firmy");
 				startScrapingKRSPobierz_profil();
 			} else {
 				logger.info("level 1 - pominiêty - b³ad w properties");
