@@ -50,15 +50,23 @@ public class KRSPobierzProfilRepository extends DatabaseAccess implements Runnab
 			TypedQuery<KRSProfilIndex> q = em
 					.createQuery("SELECT i FROM KRSProfilIndex i WHERE status is null order by rand()",
 							KRSProfilIndex.class)
-					.setMaxResults(1);
+					.setMaxResults(20);
 			listToScrape = q.getResultList();
 			for(KRSProfilIndex i:listToScrape){
 				logger.info("url="+i.getUrl());
+				try{
+					
 				KRSPobierzProfilGet profilGet = new KRSPobierzProfilGet(this.getThreadId(), this.getProperties(), this.getEntityManagerFactory(), i.getUrl());
 //				KRSPobierzProfilGet profilGet = new KRSPobierzProfilGet(this.getThreadId(), this.getProperties(), this.getEntityManagerFactory(), "http://krs-pobierz.pl/przedsiebiorstwo-wielobranzowe-dabex-i231605");
 				em.getTransaction().begin();
 				i.setStatus(Integer.toString(profilGet.getStatusCode()));
 				em.getTransaction().commit();
+				}catch(Exception e){
+					logger.error("Prawdopodobnie profil nie jest zescrapowany!!!");
+					logger.error(e.getMessage());
+					logger.error(e.getCause());
+					logger.error(e.getLocalizedMessage());
+				}
 				
 				//Opoznienie
 //				Random gen = new Random();

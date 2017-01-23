@@ -21,6 +21,7 @@ import crawler.api.ScrapeClass;
 public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 	private String urlToScrape;
 	private String idHost;
+	public enum Miesiac {stycznia, lutego, marca, kwietnia, maja, czerwca, lipca, sierpnia, wrzeúnia, paüdziernika, listopada, grudnia}
 
 	public String getUrlToScrape() {
 		return urlToScrape;
@@ -275,30 +276,31 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 //		for (String s : strTab)
 //			logger.info("linia=" + s + "<<");
 		if (strTab.length >= 3) {
-			switch (strTab[1]) {
-			case "stycznia":
+			Miesiac miesiac = Miesiac.valueOf(strTab[1]);
+			switch (miesiac) {
+			case stycznia:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 0, Integer.parseInt(strTab[0]));
-			case "lutego":
+			case lutego:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 1, Integer.parseInt(strTab[0]));
-			case "marca":
+			case marca:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 2, Integer.parseInt(strTab[0]));
-			case "kwietnia":
+			case kwietnia:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 3, Integer.parseInt(strTab[0]));
-			case "maja":
+			case maja:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 4, Integer.parseInt(strTab[0]));
-			case "czerwca":
+			case czerwca:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 5, Integer.parseInt(strTab[0]));
-			case "lipca":
+			case lipca:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 6, Integer.parseInt(strTab[0]));
-			case "sierpnia":
+			case sierpnia:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 7, Integer.parseInt(strTab[0]));
-			case "wrzeúnia":
+			case wrzeúnia:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 8, Integer.parseInt(strTab[0]));
-			case "paüdziernika":
+			case paüdziernika:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 9, Integer.parseInt(strTab[0]));
-			case "listopada":
+			case listopada:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 10, Integer.parseInt(strTab[0]));
-			case "grudnia":
+			case grudnia:
 				return new Date(Integer.parseInt(strTab[2]) - 1900, 11, Integer.parseInt(strTab[0]));
 			}
 		} else
