@@ -54,7 +54,7 @@ public class FirmenwissenGetIndex extends ScrapeClass implements Scrape {
 	}
 
 	public Object parsing(HtmlPage page, Object mainProfil) {
-		logger.info(this.getCurrentPage().asXml());
+//		logger.info(this.getCurrentPage().asXml());
 		logger.info("PARSING - index");
 		String[] addressLine1 = new String[10];
 		String[] addressLine2 = new String[10];

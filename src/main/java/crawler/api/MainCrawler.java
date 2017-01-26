@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.persistence.EntityManagerFactory;
+
 import com.mysql.cj.api.jdbc.Statement;
 
-public class MainCrawler {
+public class MainCrawler extends DatabaseAccess{
 	
 	
 	protected int threadId;
@@ -78,14 +80,16 @@ public class MainCrawler {
 	public void setRs(ResultSet rs) {
 		this.rs = rs;
 	}
-	public MainCrawler(Properties properties, int threadId) {
+	public MainCrawler(int threadId, Properties properties, EntityManagerFactory entityManagerFactory) {
+			super(threadId, properties, entityManagerFactory);
 			this.setThreadId(threadId);
 			this.setProperties(properties);
 			this.setDB_DRIVER("com.mysql.cj.jdbc.Driver"); 
-			this.setDB_URL( "jdbc:mysql://" + properties.getProperty("serverName") + "/"
-					+ properties.getProperty("databaseName") + properties.getProperty("databaseProp"));
+//			this.setDB_URL( "jdbc:mysql://" + properties.getProperty("serverName") + "/"
+//					+ properties.getProperty("databaseName") + properties.getProperty("databaseProp"));
+			this.setDB_URL(properties.getProperty("url"));
 			
-			this.setDB_USER(properties.getProperty("user").toString());
+			this.setDB_USER(properties.getProperty("user"));
 			this.setDB_PASSWORD(properties.getProperty("password"));
 	}
 	public void delay(){

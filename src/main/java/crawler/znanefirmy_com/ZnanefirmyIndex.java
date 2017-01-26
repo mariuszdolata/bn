@@ -9,8 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(indexes = { @Index(columnList = "url", name = "index_url") })
@@ -19,14 +20,23 @@ public class ZnanefirmyIndex {
 	@GeneratedValue
 	private long id;
 	private String nazwa;
-	@Column(length = 255)
 	private String url;
 	private String adres;
 	private String meta;
 	private String status;
+	private Date data;
 	
 	
 	
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
 
 	public String getStatus() {
 		return status;
@@ -51,7 +61,7 @@ public class ZnanefirmyIndex {
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getNazwa() {
 		return nazwa;
 	}
@@ -59,7 +69,7 @@ public class ZnanefirmyIndex {
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getUrl() {
 		return url;
 	}
@@ -67,7 +77,7 @@ public class ZnanefirmyIndex {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
+	@Column(columnDefinition="mediumtext")
 	public String getAdres() {
 		return adres;
 	}

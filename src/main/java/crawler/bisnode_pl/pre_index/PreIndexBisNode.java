@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.mysql.cj.api.jdbc.Statement;
 
 /**
@@ -16,12 +18,12 @@ import com.mysql.cj.api.jdbc.Statement;
  *
  */
 public class PreIndexBisNode {
-	
+	public Logger logger = Logger.getLogger(PreIndexBisNode.class);
 	public PreIndexBisNode(Properties properties){
 		final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-		final String DB_URL = System.getProperty("database.url");
-		final String USER = System.getProperty("database.user");
-		final String PASS = System.getProperty("database.password");
+		final String DB_URL = properties.getProperty("url");
+		final String USER = properties.getProperty("user");
+		final String PASS = properties.getProperty("password");
 		Connection conn = null;
 		Statement stmt = null;
 		try {
@@ -29,27 +31,27 @@ public class PreIndexBisNode {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			// STEP 3: Open a connection
-			System.out.println("Connecting to a selected database...");
+			logger.info("Connecting to a selected database...");
 			conn = DriverManager.getConnection(DB_URL, USER, PASS);
-			System.out.println("Connected database successfully...");
+			logger.info("Connected database successfully...");
 
 			// Usuniecie istniej¹cych tabel i stworzenie nowych
-			System.out.println("Creating table in given database...");
+			logger.info("Creating table in given database...");
 			stmt = (Statement) conn.createStatement();
-			String sql = "DROP TABLE IF EXISTS `" + System.getProperty("database.name") + "`.`letters`;";
+			String sql = "DROP TABLE IF EXISTS `" + properties.getProperty("database.name") + "`.`letters`;";
 			stmt.execute(sql);
-			sql = "DROP TABLE IF EXISTS `" + System.getProperty("database.name") + "`.`index_pages`;";
+			sql = "DROP TABLE IF EXISTS `" + properties.getProperty("database.name") + "`.`index_pages`;";
 			stmt.execute(sql);
-			sql = "CREATE TABLE `" + System.getProperty("database.name")
+			sql = "CREATE TABLE `" + properties.getProperty("database.name")
 					+ "`.`letters` (`letters` VARCHAR(3) NULL,`numberOfCompanies` INT NULL DEFAULT NULL);";
 			stmt.executeUpdate(sql);
-			System.out.println("Created table letters in given database...");
-			sql = "CREATE TABLE `" + System.getProperty("database.name")
+			logger.info("Created table letters in given database...");
+			sql = "CREATE TABLE `" + properties.getProperty("database.name")
 					+ "`.`index_pages` ( `letters` VARCHAR(45) NULL,  `url` VARCHAR(500) NULL,  `number` INT(10) NULL,  `status` VARCHAR(45) NULL,  INDEX `index1` (`url` ASC));";
 			stmt.executeUpdate(sql);
-			System.out.println("Created table index_pages in given database...");
+			logger.info("Created table index_pages in given database...");
 			StringBuilder letters = new StringBuilder(
-					"INSERT INTO `" + System.getProperty("database.name") + "`.`letters`(letters)  VALUES  ");
+					"INSERT INTO `" + properties.getProperty("database.name") + "`.`letters`(letters)  VALUES  ");
 			for (char first = 'a'; first <= 'z'; first++) {
 				for (char second = 'a'; second <= 'z'; second++) {
 					for (char third = 'a'; third <= 'z'; third++) {
@@ -61,13 +63,13 @@ public class PreIndexBisNode {
 			String sqlInsert = letters.substring(0, letters.length() - 1);
 			stmt.execute(sqlInsert);
 			// usuniêcie tabeli dla indexu
-			sql = "DROP TABLE IF EXISTS " + System.getProperty("database.name") + ".`index`;";
-			System.err.println(sql);
+			sql = "DROP TABLE IF EXISTS " + properties.getProperty("database.name") + ".`index`;";
+			logger.error(sql);
 			stmt.executeUpdate(sql);
 			// stworzenie nowej tabeli dla indexu
-//			sql = "CREATE TABLE `" + System.getProperty("database.name")
+//			sql = "CREATE TABLE `" + properties.getProperty("database.name")
 //					+ "`.`index` (  `nazwa` MEDIUMTEXT NULL,  `url` VARCHAR(1000) NULL,  `adres` MEDIUMTEXT NULL,  `krs` VARCHAR(45) NULL,  `nip` VARCHAR(45) NULL,  `data` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, `meta` VARCHAR(1000) NULL,  `status` VARCHAR(45) NULL DEFAULT NULL,  INDEX `index1` (`url` ASC),  INDEX `indexNip` (`nip` ASC),  INDEX `indexKrs` (`krs` ASC));";
-//			System.err.println(sql);
+//			logger.error(sql);
 //			stmt.executeUpdate(sql);
 
 		} catch (SQLException se) {

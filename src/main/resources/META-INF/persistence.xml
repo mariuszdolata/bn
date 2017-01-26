@@ -26,14 +26,15 @@
 
 	<persistence-unit name="bisnode_pl" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>crawler.bisnode_pl.index.IndexBisNode</class>
+		<class>crawler.bisnode_pl.profil.ProfilBisNode</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="${database.password}" />
-			<!-- <property name="hibernate.connection.url" -->
-			<!-- value="jdbc:mysql://176.119.61.229:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" 
-				/> -->
-			<property name="hibernate.connection.url" value="${database.url}" />
-			<property name="hibernate.connection.username" value="${database.user}" />
+			<property name="hibernate.connection.password" value="bisnode" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" />
+			<property name="hibernate.connection.username" value="bisnode" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="true" />
@@ -44,7 +45,8 @@
 		</properties>
 
 	</persistence-unit>
-	<persistence-unit name="biznesfinder_pl" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="biznesfinder_pl"
+		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>crawler.biznesfinder_pl.BiznesFinderIndex</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
@@ -74,12 +76,13 @@
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="${database.password}" />
+			<property name="hibernate.connection.password" value="znanefirmy" />
 			<!-- <property name="hibernate.connection.url" -->
 			<!-- value="jdbc:mysql://176.119.61.229:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" 
 				/> -->
-			<property name="hibernate.connection.url" value="${database.url}" />
-			<property name="hibernate.connection.username" value="${database.user}" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/znanefirmy_com?useTimezone=true&amp;serverTimezone=GMT" />
+			<property name="hibernate.connection.username" value="znanefirmy" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="true" />
@@ -98,18 +101,19 @@
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="${database.password}" />
-			<!-- <property name="hibernate.connection.url" -->
-			<!-- value="jdbc:mysql://176.119.61.229:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" 
+			<!-- <property name="hibernate.connection.password" value="${database.password}" 
 				/> -->
-			<property name="hibernate.connection.url" value="${database.url}" />
-			<property name="hibernate.connection.username" value="${database.user}" />
+			<!-- <property name="hibernate.connection.url" value="${database.url}" 
+				/> -->
+			<!-- <property name="hibernate.connection.username" value="${database.user}" 
+				/> -->
+			<property name="hibernate.connection.password" value="firmenwissen" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/firmenwissen_com?useTimezone=true&amp;serverTimezone=GMT" />
+			<property name="hibernate.connection.username" value="firmenwissen" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<!-- <property name="hibernate.show_sql" value="true" /> -->
-			<!-- <property name="hibernate.archive.autodetection" value="class, hbm"> 
-				</property> -->
-			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
+
 		</properties>
 	</persistence-unit>
 
@@ -161,13 +165,16 @@
 
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-<!-- 			<property name="hibernate.connection.password" value="${database.password}" /> -->
-<property name="hibernate.connection.password" value="mojepanstwo" />
+			<!-- <property name="hibernate.connection.password" value="${database.password}" 
+				/> -->
+			<property name="hibernate.connection.password" value="mojepanstwo" />
 			<property name="hibernate.connection.url"
 				value="jdbc:mysql://localhost:3306/mojepanstwo?useTimezone=true&amp;serverTimezone=GMT" />
-<!-- 			<property name="hibernate.connection.url" value="${database.url}" /> -->
-<!-- 			<property name="hibernate.connection.username" value="${database.user}" /> -->
-<property name="hibernate.connection.username" value="mojepanstwo" />
+			<!-- <property name="hibernate.connection.url" value="${database.url}" 
+				/> -->
+			<!-- <property name="hibernate.connection.username" value="${database.user}" 
+				/> -->
+			<property name="hibernate.connection.username" value="mojepanstwo" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<!-- <property name="hibernate.show_sql" value="true" /> -->

@@ -71,12 +71,12 @@
 			<version>3.0.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.jayway.restassured/rest-assured -->
-<!-- 		Pakiet dla okreslenia statusCode dla Selenium -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.jayway.restassured</groupId> -->
-<!-- 			<artifactId>rest-assured</artifactId> -->
-<!-- 			<version>2.9.0</version> -->
-<!-- 		</dependency> -->
+		<!-- Pakiet dla okreslenia statusCode dla Selenium -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.jayway.restassured</groupId> -->
+		<!-- <artifactId>rest-assured</artifactId> -->
+		<!-- <version>2.9.0</version> -->
+		<!-- </dependency> -->
 
 
 
@@ -93,19 +93,24 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
+
 						<manifest>
-						<mainClass>crawler.biznesfinder_pl.StartBiznesFinder</mainClass>
-<!-- 							<mainClass>crawler.krs_pobierz_pl.profil.StartKRSPobierzProfil</mainClass> -->
+							<!-- <mainClass>crawler.firmenwissen_com.StartFirmenwissen</mainClass> -->
+							<!-- <mainClass>crawler.biznesfinder_pl.StartBiznesFinder</mainClass> -->
+							<!-- <mainClass>crawler.krs_pobierz_pl.profil.StartKRSPobierzProfil</mainClass> -->
 							<!-- <mainClass>crawler.mojepanstwo_pl.StartMojePanstwoZamowieniaPubliczne</mainClass> -->
 							<!-- <mainClass>crawler.znanefirmy_com.StartZnanefirmy</mainClass> -->
+							<mainClass>crawler.bisnode_pl.pre_index.BisNodeStart</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
 				<executions>
 					<execution>
+
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+
 						</goals>
 					</execution>
 				</executions>

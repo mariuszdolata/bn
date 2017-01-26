@@ -5,16 +5,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.springframework.dao.DataAccessException;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class ProfilBisNode {
 	private String nazwa;
-	@Column(length = 1000)
 	private String lokalizacja;
 	private String phone;
 	private String email;
@@ -24,23 +24,19 @@ public class ProfilBisNode {
 	private String regon;
 	private String krs;
 	private String dataRozpoczeciaDzialalnosci;
-	@Column(length = 5000)
 	private String dzialalnosc;
 	private String formaPrawna;
-	@Column(length = 5000)
 	private String opis;
 	private int threadId;
 	private int hostId;
 	private String meta;
-	@Id
-	@GeneratedValue
+	
 	private long id;
-	@Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "data", insertable = true)
     private Date data =new Date();
 	
 	
-	
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getData() {
 		return data;
 	}
@@ -53,6 +49,7 @@ public class ProfilBisNode {
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
+	@Column(columnDefinition="mediumtext")
 	public String getLokalizacja() {
 		return lokalizacja;
 	}
@@ -107,6 +104,7 @@ public class ProfilBisNode {
 	public void setDataRozpoczeciaDzialalnosci(String dataRozpoczeciaDzialalnosci) {
 		this.dataRozpoczeciaDzialalnosci = dataRozpoczeciaDzialalnosci;
 	}
+	@Column(columnDefinition="mediumtext")
 	public String getDzialalnosc() {
 		return dzialalnosc;
 	}
@@ -137,13 +135,15 @@ public class ProfilBisNode {
 	public void setMeta(String meta) {
 		this.meta = meta;
 	}
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+	@Column(columnDefinition="mediumtext")
 	public String getOpis() {
 		return opis;
 	}

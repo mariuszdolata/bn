@@ -5,14 +5,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 public class IndexBisNode {
-	@Id
-	@GeneratedValue
+	
 	private long id;
 	private String nazwa;
 	private String url;
@@ -22,8 +24,6 @@ public class IndexBisNode {
 	private String meta;
 	private String threadId;
 	private String hostId;
-	@Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "data", insertable = true)
     private Date data =new Date();
 	private String status;
 	
@@ -36,12 +36,16 @@ public class IndexBisNode {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getData() {
 		return data;
 	}
@@ -67,18 +71,21 @@ public class IndexBisNode {
 	public void setHostId(String hostId) {
 		this.hostId = hostId;
 	}
+	@Column(columnDefinition="mediumtext")
 	public String getNazwa() {
 		return nazwa;
 	}
 	public void setNazwa(String nazwa) {
 		this.nazwa = nazwa;
 	}
+	
 	public String getUrl() {
 		return url;
 	}
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	@Column(columnDefinition="mediumtext")
 	public String getAdres() {
 		return adres;
 	}

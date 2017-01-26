@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.log4j.Logger;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -24,8 +26,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.mysql.cj.api.jdbc.Statement;
 
 import crawler.api.Scrape;
+import crawler.api.ScrapeClass;
 
-public class GetIndex implements Scrape {
+public class GetIndex extends ScrapeClass implements Scrape {
 	private String urlToScrape;
 	private String lettersToScrape;
 	private HtmlPage currentPage;
@@ -39,8 +42,7 @@ public class GetIndex implements Scrape {
 	private Connection conn = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
-	
-	
+	public Logger logger = Logger.getLogger(GetIndex.class);
 
 	public String getLettersToScrape() {
 		return lettersToScrape;
@@ -155,11 +157,14 @@ public class GetIndex implements Scrape {
 	 * @param urlToScrape
 	 * @param properties
 	 */
-	public GetIndex(String lettersToScrape, int pageNumber, Properties properties) {
+	public GetIndex(int threadId, Properties properties, EntityManagerFactory entityManagerFactory,
+			String lettersToScrape, int pageNumber) {
+		super(threadId, properties, entityManagerFactory);
 		this.setProperties(properties);
 		this.DB_DRIVER = "com.mysql.cj.jdbc.Driver";
-		this.DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
-				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
+//		this.DB_URL = "jdbc:mysql://" + properties.getProperty("serverName") + "/"
+//				+ properties.getProperty("databaseName") + properties.getProperty("databaseProp");
+		this.DB_URL=this.getProperties().getProperty("url");
 		this.DB_USER = properties.getProperty("user");
 		this.DB_PASSWORD = properties.getProperty("password");
 		try {
@@ -176,7 +181,8 @@ public class GetIndex implements Scrape {
 			e.printStackTrace();
 		}
 
-		this.urlToScrape = "http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=" + lettersToScrape+"&strona="+Integer.toString(pageNumber);
+		this.urlToScrape = "http://www.bisnode.pl/wyniki-wyszukiwania/?nazwa=" + lettersToScrape + "&strona="
+				+ Integer.toString(pageNumber);
 		try {
 			this.currentPage = this.getPage(urlToScrape);
 			// jeœli strona wczytana nie jest pusta
@@ -184,10 +190,10 @@ public class GetIndex implements Scrape {
 				this.indexList = (List<IndexBisNode>) this.parsing(this.currentPage, new IndexBisNode());
 				insertDataListEntity(this.getIndexList());
 			} else {
-				System.err.println("strona indexu jest pusta");
+				logger.error("strona indexu jest pusta");
 			}
 		} catch (Exception e) {
-			System.err.println("M: Nie uda³o siê pobraæ lub zapisaæ do bazy strony " + this.urlToScrape);
+			logger.error("M: Nie uda³o siê pobraæ lub zapisaæ do bazy strony " + this.urlToScrape);
 			e.printStackTrace();
 		}
 	}
@@ -223,13 +229,13 @@ public class GetIndex implements Scrape {
 	 * umieszczenie w nim danych
 	 */
 	public Object parsing(HtmlPage page, Object mainProfil) {
-		System.out.println("Wejœcie w metodê parsing dla indexu");
+		logger.info("Wejœcie w metodê parsing dla indexu");
 		HtmlSpan liczbaFirm = (HtmlSpan) page
 				.getByXPath("//span[@style=\"color: #fff; font-size: 20px; float: left; font-weight: bold;\"]").get(0);
 		int spacePosition = liczbaFirm.asText().indexOf(" ");
 		String liczbaFirmTmp = liczbaFirm.asText().substring(0, spacePosition);
 		this.setNumberOfCompanies(Integer.parseInt(liczbaFirmTmp));
-		// System.out.println("liczba firm = "+liczbaFirm.asText()+"
+		// logger.info("liczba firm = "+liczbaFirm.asText()+"
 		// int="+liczba);
 		List<IndexBisNode> firmy = new ArrayList<IndexBisNode>();
 		List<HtmlDivision> nazwy = (List<HtmlDivision>) page.getByXPath("//tr/td[2]/a/div");
@@ -249,13 +255,13 @@ public class GetIndex implements Scrape {
 					String krs = allData[2].substring(krsPos + 5);
 					index.setKrs(krs);
 				} catch (Exception e) {
-					System.err.println("brak krs");
+					logger.error("brak krs");
 				}
 				try {
 					String nip = allData[2].substring(5, krsPos);
 					index.setNip(nip);
 				} catch (Exception e) {
-					System.err.println("brak nipu");
+					logger.error("brak nipu");
 				}
 			}
 			index.setHostId(String.valueOf(properties.get("idHost")));
@@ -277,12 +283,12 @@ public class GetIndex implements Scrape {
 					+ firma.getKrs() + "\",\"" + firma.getNip() + "\",\"" + this.urlToScrape + "\"),");
 		}
 		String sql = sqlInsert.substring(0, sqlInsert.length() - 1);
-		System.out.println(sql);
+		logger.info(sql);
 		try {
 			stmt.executeUpdate(sql);
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Nie uda³o siê zapisaæ danych do tabeli INDEX");
+			logger.info("Nie uda³o siê zapisaæ danych do tabeli INDEX");
 			e.printStackTrace();
 			return false;
 		}
@@ -294,15 +300,11 @@ public class GetIndex implements Scrape {
 	 * @see crawler.bisnode_pl.index.Scrape#insertDataEntity(java.lang.Object)
 	 */
 	public void insertDataEntity(Object o) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(o);
 		entityManager.getTransaction().commit();
-
 		entityManager.close();
-		entityManagerFactory.close();
 	}
 
 	/*
@@ -311,14 +313,12 @@ public class GetIndex implements Scrape {
 	 * @see crawler.bisnode_pl.index.Scrape#insertDataListEntity(java.util.List)
 	 */
 	public <T> void insertDataListEntity(List<T> list) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		for (T object : list)
 			entityManager.persist(object);
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		entityManagerFactory.close();
 	}
 
 	public void supportFetchUrlsToScrape() {

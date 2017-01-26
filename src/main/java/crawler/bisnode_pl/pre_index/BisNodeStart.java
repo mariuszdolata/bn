@@ -5,17 +5,41 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.persistence.Persistence;
+
+import org.apache.log4j.Logger;
+
 import crawler.api.Scrape;
+import crawler.api.StartCrawler;
 import crawler.bisnode_pl.index.GetIndex;
 import crawler.bisnode_pl.index.IndexRepository;
 import crawler.bisnode_pl.profil.GetProfile;
 import crawler.bisnode_pl.profil.ProfilRepository;
+import crawler.mojepanstwo_pl.StartMojePanstwoKRSPodmiot;
 
-public class BisNodeStart {
+public class BisNodeStart extends StartCrawler {
+	public final static Logger logger = Logger.getLogger(BisNodeStart.class);
 
 	public static void main(String[] args) {
 		// wczytanie ustawien dla crawlera z pliku tekstowego
-		Properties properties = loadProperties();
+
+		try {
+			BisNodeStart.entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
+		} catch (Exception e) {
+			logger.error("Nie mozna utworzyc obiektu entityManagerFactory!");
+			logger.error(e.getMessage());
+			logger.error(e.getClass().getName());
+			e.printStackTrace();
+		}
+		try {
+			BisNodeStart.properties = BisNodeStart
+					.loadProperties("c:\\crawlers\\properties\\bisnode_pl.properties");
+		} catch (Exception e) {
+			logger.error("Nie mozna wczytac properties z c:\\crawlers\\properties\\bisnode_pl.properties");
+			logger.error(e.getMessage());
+			logger.error(e.getClass().getName());
+			e.printStackTrace();
+		}
 		// true - start index
 		// false - restart index
 		boolean startPreIndex;
@@ -23,40 +47,41 @@ public class BisNodeStart {
 				|| properties.getProperty("test_pre_index").contains("1"))) {
 			if (properties.getProperty("level1").contains("1")) {
 				startPreIndex = true;
-				System.out.println("level 1 zosta³ uruchomiony");
+				logger.info("level 1 zosta³ uruchomiony");
 			} else {
 				startPreIndex = false;
-				System.out.println("level 1 zosta³ pominiêty");
+				logger.info("level 1 zosta³ pominiêty");
 			}
 			if (properties.getProperty("level2").contains("1")) {
 				startIndex(properties, startPreIndex);
-				System.out.println("level2 zosta³ uruchomiony");
+				logger.info("level2 zosta³ uruchomiony");
 			} else
-				System.out.println("level2 zosta³ pominiêty");
+				logger.info("level2 zosta³ pominiêty");
 			if (properties.getProperty("level3").contains("1")) {
-				System.out.println("level3 zosta³ uruchomiony");
+				logger.info("level3 zosta³ uruchomiony");
 				startProfile(properties);
 			} else
-				System.out.println("level3 zosta³ pominiêty");
+				logger.info("level3 zosta³ pominiêty");
 		} else {
 			System.out.println("Wykryto sesjê testow¹. Level1, Level2, Level3 zosta³y pominiête");
 			if (properties.getProperty("test_pre_index").contains("1")) {
-				System.out.println("zosta³ uruchomiony test pre indexu");
+				logger.info("zosta³ uruchomiony test pre indexu");
 				PreIndexBisNode preIndex = new PreIndexBisNode(properties);
 			} else
-				System.out.println("test pre indexu zosta³ pominiêty");
+				logger.info("test pre indexu zosta³ pominiêty");
 
 			if (properties.getProperty("test_index").contains("1")) {
-				System.out.println("zosta³ utuchomiony test indexu");
-				//0 dla sesji testowej wczytuje pierwsz¹ podstronê indexu
-				Scrape index = new GetIndex("orl", 0,properties);
+				logger.info("zosta³ utuchomiony test indexu");
+				// 0 dla sesji testowej wczytuje pierwsz¹ podstronê indexu
+				Scrape index = new GetIndex(0, BisNodeStart.properties, BisNodeStart.entityManagerFactory, "orl", 0);
 			} else
-				System.out.println("test indexu zosta³ pominiêty");
+				logger.info("test indexu zosta³ pominiêty");
 			if (properties.getProperty("test_profile").contains("1")) {
-				System.out.println("Zosta³ uruchomiony test profilu");
-				Scrape profil = new GetProfile("http://www.bisnode.pl/firma/?id=777814&nazwa=WIS£A_P£OCK_S_A", properties);
+				logger.info("Zosta³ uruchomiony test profilu");
+				Scrape profil = new GetProfile(0, BisNodeStart.properties, BisNodeStart.entityManagerFactory,
+						"http://www.bisnode.pl/firma/?id=777814&nazwa=WIS£A_P£OCK_S_A");
 			} else
-				System.out.println("test profilu zosta³ pominiêty");
+				logger.info("test profilu zosta³ pominiêty");
 		}
 
 		// startIndex(properties, startIndex);
@@ -67,35 +92,38 @@ public class BisNodeStart {
 
 	}
 
-	public static Properties loadProperties() {
-		Properties properties = new Properties();
-		InputStream input = null;
-		int numberOfThread = 99;
-		int idHost = 99;
-
-		try {
-			input = new FileInputStream("c:\\crawlers\\properties\\bisnode_pl.properties");
-			// load a properties file
-			properties.load(input);
-			// get the property value and print it out
-			System.out.println("idHost =" + properties.getProperty("idHost"));
-			idHost = Integer.parseInt(properties.getProperty("idHost"));
-			System.out.println("numberOfThreads =" + properties.getProperty("numberOfThreads"));
-			numberOfThread = Integer.parseInt(properties.getProperty("numberOfThreads"));
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return properties;
-	}
+	// public static Properties loadProperties() {
+	// Properties properties = new Properties();
+	// InputStream input = null;
+	// int numberOfThread = 99;
+	// int idHost = 99;
+	//
+	// try {
+	// input = new
+	// FileInputStream("c:\\crawlers\\properties\\bisnode_pl.properties");
+	// // load a properties file
+	// properties.load(input);
+	// // get the property value and print it out
+	// logger.info("idHost =" + properties.getProperty("idHost"));
+	// idHost = Integer.parseInt(properties.getProperty("idHost"));
+	// logger.info("numberOfThreads =" +
+	// properties.getProperty("numberOfThreads"));
+	// numberOfThread =
+	// Integer.parseInt(properties.getProperty("numberOfThreads"));
+	//
+	// } catch (IOException ex) {
+	// ex.printStackTrace();
+	// } finally {
+	// if (input != null) {
+	// try {
+	// input.close();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	// return properties;
+	// }
 
 	/**
 	 * Tworzenie tabeli letters ('aaa', 'zzz') z informacj¹ ile firm dla danego
@@ -116,11 +144,11 @@ public class BisNodeStart {
 	public static void startIndex(Properties properties, boolean startIndex) {
 		// tylko podczas startu scrapowania indexu uruchom
 		if (startIndex)
-			startPreIndex(properties);
+			startPreIndex(BisNodeStart.properties);
 		int numberOfThreads = Integer.parseInt(properties.getProperty("numberOfThreads"));
 		IndexRepository[] indexRepository = new IndexRepository[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
-			indexRepository[i] = new IndexRepository(properties, i);
+			indexRepository[i] = new IndexRepository(i, properties, BisNodeStart.entityManagerFactory);
 		}
 		Thread[] threads = new Thread[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -142,7 +170,7 @@ public class BisNodeStart {
 
 		ProfilRepository[] profilRepository = new ProfilRepository[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
-			profilRepository[i] = new ProfilRepository(properties, i);
+			profilRepository[i] = new ProfilRepository(i, properties, BisNodeStart.entityManagerFactory);
 		}
 		Thread[] threads = new Thread[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {

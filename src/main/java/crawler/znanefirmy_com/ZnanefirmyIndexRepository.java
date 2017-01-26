@@ -29,7 +29,7 @@ public class ZnanefirmyIndexRepository extends DatabaseAccess implements Runnabl
 	 */
 	public void run() {
 		logger.info("START znanefirmyIndexRepository, watek nr=" + this.getThreadId());
-		// this.startFirstPage();
+//		 this.startFirstPage();
 		this.startNextPages();
 	}
 
@@ -48,6 +48,7 @@ public class ZnanefirmyIndexRepository extends DatabaseAccess implements Runnabl
 					.setMaxResults(5);
 			results = query.getResultList();
 			entityManager.getTransaction().commit();
+			try{
 			for (Object[] o : results) {
 				entityManager.getTransaction().begin();
 				logger.info("url=" + o[0] + ", nazwa=" + o[1]);
@@ -93,11 +94,11 @@ public class ZnanefirmyIndexRepository extends DatabaseAccess implements Runnabl
 			entityManager.getTransaction().commit();
 			entityManager.close();
 			try {
-				Thread.sleep(2500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}}catch(Exception e){logger.error("B³¹d ZnanefirmyIndexRepository - blad podczas wczytania/parsowania strony");}
 		} while (!results.isEmpty());
 		// } while (false);
 	}

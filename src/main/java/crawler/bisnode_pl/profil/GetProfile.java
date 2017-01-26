@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.log4j.Logger;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -18,14 +20,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 
 import crawler.api.Scrape;
+import crawler.api.ScrapeClass;
 
-public class GetProfile implements Scrape {
+public class GetProfile extends ScrapeClass implements Scrape {
 
 	private String urlToScrape;
 	private HtmlPage currentPage;
 	private ProfilBisNode profil;
 	private Properties properties;
-	
+	public Logger logger = Logger.getLogger(GetProfile.class);
 	
 	
 	public Properties getProperties() {
@@ -52,22 +55,23 @@ public class GetProfile implements Scrape {
 	public void setProfil(ProfilBisNode profil) {
 		this.profil = profil;
 	}
-	public GetProfile(String urlToScrape, Properties properties){
+	public GetProfile(int threadId, Properties properties, EntityManagerFactory entityManagerFactory, String urlToScrape){
+		super(threadId, properties, entityManagerFactory);
 		this.setProperties(properties);
-		System.out.println("Konstruktor KRSPobierzProfilGet dla url="+urlToScrape);
+		logger.info("Konstruktor KRSPobierzProfilGet dla url="+urlToScrape);
 		this.urlToScrape=urlToScrape;
 		try{
 			this.currentPage = this.getPage(urlToScrape);
-//			System.out.println(this.getCurrentPage().asXml());
+//			logger.info(this.getCurrentPage().asXml());
 			//jeœli strona wczytana nie jest pusta
 			if(this.currentPage!=null){
 				this.profil = (ProfilBisNode) this.parsing(this.currentPage, new ProfilBisNode());
-//				if(this.insertData(this.profil))System.out.println("Profil zapisany");
-//				else System.err.println("Nie udalo sie zapisac profilu");
+//				if(this.insertData(this.profil))logger.info("Profil zapisany");
+//				else logger.error("Nie udalo sie zapisac profilu");
 				insertDataEntity(this.getProfil());
 			}	
 		}catch(Exception e){
-			System.err.println("M: Nie uda³o siê pobraæ strony "+this.urlToScrape);
+			logger.error("M: Nie uda³o siê pobraæ strony "+this.urlToScrape);
 			e.printStackTrace();
 		}
 	}
@@ -83,11 +87,11 @@ public class GetProfile implements Scrape {
 		try {
 			return client.getPage(url);
 		} catch (FailingHttpStatusCodeException e) {
-			System.err.println("FailingHttpStatusException<<<<<<<<<<<<<<");
+			logger.error("FailingHttpStatusException<<<<<<<<<<<<<<");
 			e.printStackTrace();
 			return null;
 		} catch (MalformedURLException e) {
-			System.err.println("MalformedURLException<<<<<<<<<<<<<<");
+			logger.error("MalformedURLException<<<<<<<<<<<<<<");
 			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
@@ -98,7 +102,7 @@ public class GetProfile implements Scrape {
 	}
 
 	public Object parsing(HtmlPage page, Object mainProfil) {
-		System.out.println("this.parsing() - START");
+		logger.info("this.parsing() - START");
 		ProfilBisNode profil = new ProfilBisNode();
 		//nazwa
     	List<HtmlSpan> nazwy = (List<HtmlSpan>) page.getByXPath("//span[@itemprop='legalName']");
@@ -135,7 +139,7 @@ public class GetProfile implements Scrape {
      		int krsPosition = opis.indexOf(keyKRS);
      		if(!opis.substring(krsPosition+4, krsPosition+14).contains(","))profil.setKrs(opis.substring(krsPosition+4, krsPosition+14));
      	}catch(Exception e){
-     		System.err.println("Nie znaleziono numeru KRS");
+     		logger.error("Nie znaleziono numeru KRS");
      		profil.setKrs("NULL");
      	}
      	
@@ -145,16 +149,16 @@ public class GetProfile implements Scrape {
      		String formaPrawnaKey="Forma prawna firmy";
          	int formaPrawna = opis.indexOf(formaPrawnaKey);
          	String formaPrawnaS=opis.substring(formaPrawna+19);
-         	System.err.println(formaPrawnaS);
+         	logger.error(formaPrawnaS);
          	int toPosition=formaPrawnaS.indexOf("to");
          	int dotPosition = formaPrawnaS.indexOf(".");
     	    profil.setFormaPrawna(formaPrawnaS.substring(toPosition+3, dotPosition));
      	}catch(Exception e){
-     		System.out.println("Nie uda³o wydzieliæ siê formy prawnej");
+     		logger.info("Nie uda³o wydzieliæ siê formy prawnej");
      		profil.setFormaPrawna("NULL");
      	}
      	
-	    System.out.println(profil.toString());
+	    logger.info(profil.toString());
 	    //DUNS
 	    Object object = page.getByXPath("//a[@id='linkduns']").get(0);
 	   /**
@@ -165,8 +169,8 @@ public class GetProfile implements Scrape {
 			HtmlPage pageDuns = dunsAnchor.click();
 			HtmlTableDataCell duns = (HtmlTableDataCell) pageDuns.getByXPath("//td[@id=\"duns\"]").get(0);
 			profil.setDuns(duns.asText());
-			if(page.equals(pageDuns)) System.out.println("Strony identyczne");
-			else System.out.println("strony siê ró¿ni¹");
+			if(page.equals(pageDuns)) logger.info("Strony identyczne");
+			else logger.info("strony siê ró¿ni¹");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -180,19 +184,17 @@ public class GetProfile implements Scrape {
 	public Boolean insertData(Object objectToInsert) {
 		
 		try{
-			EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("bisnode_pl");
-			EntityManager entityManager = entityManagerFactory.createEntityManager();
-			System.out.println("utworzono entityManagera");
+			EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
+			logger.info("utworzono entityManagera");
 			entityManager.getTransaction().begin();
 			crawler.bisnode_pl.profil.ProfilBisNode profilTemp=(crawler.bisnode_pl.profil.ProfilBisNode) objectToInsert;
 			entityManager.persist(profilTemp);
 			entityManager.getTransaction().commit();
-			System.out.println("zapisano  entityManagera");
+			logger.info("zapisano  entityManagera");
 			entityManager.close();
-			entityManagerFactory.close();
 			return true;
 		}catch(Exception e){
-			System.err.println("M: nie mozna zapisac obiektu do tabeli");
+			logger.error("M: nie mozna zapisac obiektu do tabeli");
 			e.printStackTrace();
 			return false;
 		}
@@ -229,27 +231,19 @@ public class GetProfile implements Scrape {
 
 	}
 	public void insertDataEntity(Object o) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();		
 		entityManager.getTransaction().begin();
 		entityManager.persist(o);
-		entityManager.getTransaction().commit();
-		
+		entityManager.getTransaction().commit();		
 		entityManager.close();
-		entityManagerFactory.close();
 		
 	}
 	public <T> void insertDataListEntity(List<T> list) {
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(System.getProperty("database.name"));
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();		
 		entityManager.getTransaction().begin();
 		for(T object:list)entityManager.persist(object);
-		entityManager.getTransaction().commit();
-		
+		entityManager.getTransaction().commit();		
 		entityManager.close();
-		entityManagerFactory.close();
 		
 	}
 	
