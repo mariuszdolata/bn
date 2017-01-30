@@ -32,6 +32,9 @@ public abstract class StartCrawler {
 	public static Properties loadProperties(String filePath) {
 		java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 		java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+		System.setProperty("webdriver.gecko.driver", "C:\\crawlers\\drivers\\geckodriver.exe");
+		System.setProperty("webdriver.opera.driver", "C:\\crawlers\\drivers\\operadriver.exe");
+		System.setProperty("webdriver.chrome.driver", "C:\\crawlers\\drivers\\chromedriver.exe");
 		Properties properties = new Properties();
 		InputStream input = null;
 		int numberOfThread = 99;

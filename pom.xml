@@ -96,11 +96,11 @@
 
 						<manifest>
 							<!-- <mainClass>crawler.firmenwissen_com.StartFirmenwissen</mainClass> -->
-							<!-- <mainClass>crawler.biznesfinder_pl.StartBiznesFinder</mainClass> -->
+							<mainClass>crawler.biznesfinder_pl.StartBiznesFinder</mainClass>
 							<!-- <mainClass>crawler.krs_pobierz_pl.profil.StartKRSPobierzProfil</mainClass> -->
 							<!-- <mainClass>crawler.mojepanstwo_pl.StartMojePanstwoZamowieniaPubliczne</mainClass> -->
 							<!-- <mainClass>crawler.znanefirmy_com.StartZnanefirmy</mainClass> -->
-							<mainClass>crawler.bisnode_pl.pre_index.BisNodeStart</mainClass>
+<!-- 							<mainClass>crawler.bisnode_pl.pre_index.BisNodeStart</mainClass> -->
 						</manifest>
 					</archive>
 				</configuration>
