@@ -76,7 +76,7 @@ public class ScrapeClass extends DatabaseAccess {
 	 */
 	public HtmlPage getPage(String url){
 		WebClient client = new WebClient();
-		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
+//		client.setHTMLParserListener(HTMLParserListener.LOG_REPORTER);
 		try {
 			logger.info("WYKONANIE getPage("+url+")");
 			return client.getPage(url);

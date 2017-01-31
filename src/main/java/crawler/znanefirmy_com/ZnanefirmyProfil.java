@@ -2,13 +2,13 @@ package crawler.znanefirmy_com;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class ZnanefirmyProfil {
@@ -29,9 +29,6 @@ public class ZnanefirmyProfil {
 	private String pkd2;
 	private String meta;
 	private String gps;
-	@Column(name="data", insertable=false, updatable=false, columnDefinition="timestamp default current_timestamp")
-	@org.hibernate.annotations.Generated(value=GenerationTime.INSERT)
-	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	private Date dateCreated;
 	
 	
@@ -125,7 +122,8 @@ public class ZnanefirmyProfil {
 	public void setMeta(String meta) {
 		this.meta = meta;
 	}
-	
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDateCreated() {
 		return dateCreated;
 	}

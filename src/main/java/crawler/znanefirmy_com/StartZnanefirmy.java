@@ -164,7 +164,12 @@ public class StartZnanefirmy extends StartCrawler {
 			threads[i] = new Thread(profilRepository[i]);
 		}
 		for (int i = 0; i < numberOfThreads; i++) {
-			threads[i].start();
+			try{
+				threads[i].start();				
+			}catch(Exception e){
+				logger.error("b³ad watku nr="+i);
+				threads[i].start();
+			}
 		}
 	}
 

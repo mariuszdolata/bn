@@ -85,7 +85,7 @@ public class BiznesFinderIndexGet extends ScrapeClass implements Scrape {
 			int liczbaFirmInt=Integer.parseInt(liczbaFirmString[0]);
 			this.setNumberOfCompanies(liczbaFirmInt);
 			logger.info("LICZBA FIRM="+liczbaFirmInt);
-			if(liczbaFirmInt>25){
+			if(liczbaFirmInt>25&&this.getProperties().getProperty("level2").contains("1")){
 				List<BiznesFinderDokonczenieIndexu> indexy = new ArrayList<BiznesFinderDokonczenieIndexu>();
 				for(int i=25, j=1;i<liczbaFirmInt;i+=25, j++){
 					BiznesFinderDokonczenieIndexu index = new BiznesFinderDokonczenieIndexu();

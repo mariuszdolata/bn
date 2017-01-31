@@ -93,6 +93,29 @@
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
 	</persistence-unit>
+	<persistence-unit name="proxy"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>proxy.ProxyEntity</class>
+		<class>proxy.ProxyList</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+			<!-- <property name="hibernate.connection.password" value="${database.password}" 
+				/> -->
+			<!-- <property name="hibernate.connection.url" value="${database.url}" 
+				/> -->
+			<!-- <property name="hibernate.connection.username" value="${database.user}" 
+				/> -->
+			<property name="hibernate.connection.password" value="proxy" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/proxy?useTimezone=true&amp;serverTimezone=GMT" />
+			<property name="hibernate.connection.username" value="proxy" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+
+		</properties>
+	</persistence-unit>
 
 	<persistence-unit name="firmenwissen"
 		transaction-type="RESOURCE_LOCAL">

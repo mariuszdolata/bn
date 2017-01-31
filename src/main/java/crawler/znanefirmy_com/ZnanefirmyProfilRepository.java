@@ -32,34 +32,39 @@ public class ZnanefirmyProfilRepository extends DatabaseAccess implements Runnab
 			results = q.getResultList();
 			entityManager.getTransaction().commit();		
 			for(String urlToScrape:results){
-				logger.info("Watek nr "+this.getThreadId() + " urlToScrape="+urlToScrape);
-				ZnanefirmyGetProfil znanefirmyGetProfil = new ZnanefirmyGetProfil(this.getThreadId(), this.getProperties(), this.getEntityManagerFactory(), urlToScrape);
-				if(znanefirmyGetProfil.getStatusCode()==200){
-					logger.info("ProfiurlToScrapepisany dla url="+urlToScrape);
-					//aktualizacja STATUS w tabeli znanefirmyIndex
-					String sqlUpdate="UPDATE ZnanefirmyIndex set status='done' WHERE url like ?";
-					entityManager.getTransaction().begin();
-					try{
-						int updates = entityManager.createNativeQuery(sqlUpdate).setParameter(1, urlToScrape).executeUpdate();
-						logger.info("zaktualizowano "+updates + " statusow w tabeli ZnanefirmyIndex");
-						logger.info("WSTAWIONO PROFIL idHost="+this.getProperties().getProperty("idHost")+", threadId="+this.getThreadId()+", url="+urlToScrape);
-					}catch(Exception e) {
-						logger.error("BLAD aktualizacji statusu dla url="+urlToScrape+"\n"+e.getMessage());
+				try{
+//					logger.info("Watek nr "+this.getThreadId() + " urlToScrape="+urlToScrape);
+					ZnanefirmyGetProfil znanefirmyGetProfil = new ZnanefirmyGetProfil(this.getThreadId(), this.getProperties(), this.getEntityManagerFactory(), urlToScrape);
+					if(znanefirmyGetProfil.getStatusCode()==200){
+//						logger.info("ProfiurlToScrapepisany dla url="+urlToScrape);
+						//aktualizacja STATUS w tabeli znanefirmyIndex
+						String sqlUpdate="UPDATE ZnanefirmyIndex set status='done' WHERE url like ?";
+						entityManager.getTransaction().begin();
+						try{
+							int updates = entityManager.createNativeQuery(sqlUpdate).setParameter(1, urlToScrape).executeUpdate();
+//							logger.info("zaktualizowano "+updates + " statusow w tabeli ZnanefirmyIndex");
+							logger.info("WSTAWIONO PROFIL idHost="+this.getProperties().getProperty("idHost")+", threadId="+this.getThreadId()+", url="+urlToScrape);
+						}catch(Exception e) {
+							logger.error("BLAD aktualizacji statusu dla url="+urlToScrape+"\n"+e.getMessage());
+						}
+						entityManager.getTransaction().commit();
 					}
-					entityManager.getTransaction().commit();
+					else{
+						logger.warn("BLAD POBRANIA PROFILU dla url="+urlToScrape+"\n HTML Code Response = "+znanefirmyGetProfil.getStatusCode());
+					}
+					try {
+						Thread.sleep(Integer.parseInt(this.getProperties().getProperty("delay")));
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}catch(Exception e){
+					logger.error("blad profila dla url="+urlToScrape);
 				}
-				else{
-					logger.warn("BLAD POBRANIA PROFILU dla url="+urlToScrape+"\n HTML Code Response = "+znanefirmyGetProfil.getStatusCode());
-				}
-				try {
-					Thread.sleep(Integer.parseInt(this.getProperties().getProperty("delay")));
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
 			}
 			entityManager.close();
 		}while(!results.isEmpty());	

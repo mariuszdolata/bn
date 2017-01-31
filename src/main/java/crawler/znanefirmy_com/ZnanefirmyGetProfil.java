@@ -41,7 +41,7 @@ public class ZnanefirmyGetProfil extends ScrapeClass implements Scrape{
 	}
 
 	public Object parsing(HtmlPage page, Object mainProfil) {
-		logger.info("ZnanefirmyGetProfil.parsing(...)");
+//		logger.info("ZnanefirmyGetProfil.parsing(...)");
 		List<HtmlTableRow> data = (List<HtmlTableRow>) this.getCurrentPage().getByXPath("//table[@class=\"table table-bordered table-striped\"]/tbody/tr");
 		this.setProfil(new ZnanefirmyProfil());
 		profil.setMeta(this.getUrlToScrape());
