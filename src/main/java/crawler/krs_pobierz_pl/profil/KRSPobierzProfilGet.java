@@ -21,7 +21,25 @@ import crawler.api.ScrapeClass;
 public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 	private String urlToScrape;
 	private String idHost;
+	private HtmlPage CurrentPageLocalLocal;
 	public enum Miesiac {stycznia, lutego, marca, kwietnia, maja, czerwca, lipca, sierpnia, wrzeúnia, paüdziernika, listopada, grudnia}
+
+	
+	public String getIdHost() {
+		return idHost;
+	}
+
+	public void setIdHost(String idHost) {
+		this.idHost = idHost;
+	}
+
+	public HtmlPage getCurrentPageLocal() {
+		return CurrentPageLocalLocal;
+	}
+
+	public void setCurrentPageLocal(HtmlPage CurrentPageLocalLocal) {
+		this.CurrentPageLocalLocal = CurrentPageLocalLocal;
+	}
 
 	public String getUrlToScrape() {
 		return urlToScrape;
@@ -38,17 +56,23 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 		this.urlToScrape = urlToScrape;
 		// this.testStrony();
 		logger.info("pobieranie strony...");
-		this.setCurrentPage(this.getPage(this.getUrlToScrape()));
+		try{
+			this.getCurrentPageLocal().cleanUp();	
+			
+		}catch(Exception e){
+			logger.error("HtmlPage.cleanUp() - wystapi≥ problem");
+		}
+		this.setCurrentPageLocal(this.getPage(this.getUrlToScrape()));
 		logger.info("ustawianie statusCode");
-		this.setStatusCode(this.getCurrentPage().getWebResponse().getStatusCode());
+		this.setStatusCode(this.getCurrentPageLocal().getWebResponse().getStatusCode());
 		logger.info("sprawdzanie czy status code==200, statusCode=" + this.getStatusCode());
 
 		if (this.getStatusCode() == 200) {
 			this.parsing(idThread);
-		} else
-
-			logger.warn("STATUS=" + this.getStatusCode());
-
+		} else{
+			logger.warn("STATUS=" + this.getStatusCode());		
+		}
+		this.getCurrentPageLocal().cleanUp();
 	}
 
 	@Override
@@ -107,6 +131,9 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 			logger.error("IOException");
 			e.printStackTrace();
 		}
+		finally{
+			client.close();
+		}
 	}
 
 	public List<String> fetchUrlsToScrape() {
@@ -119,8 +146,8 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 		mainProfil.setIdHost(Integer.parseInt(properties.getProperty("idHost")));
 		mainProfil.setIdThread(idThread);
 		try {
-			String htmlCode = this.getCurrentPage().asText();
-			HtmlPage mainPage = this.getCurrentPage();
+			String htmlCode = this.getCurrentPageLocal().asText();
+			HtmlPage mainPage = this.getCurrentPageLocal();
 			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
 			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
 			DomElement contactData = mainPage.getElementById("contactData");
@@ -266,6 +293,7 @@ public class KRSPobierzProfilGet extends ScrapeClass implements Scrape {
 		}catch(Exception e){
 			logger.error("prawdopodobnie BAN!");
 		}
+		
 	}
 
 	@SuppressWarnings("deprecation")

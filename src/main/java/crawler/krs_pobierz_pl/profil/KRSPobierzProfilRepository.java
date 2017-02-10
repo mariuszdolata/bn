@@ -1,20 +1,21 @@
 package crawler.krs_pobierz_pl.profil;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import crawler.api.DatabaseAccess;
 
 public class KRSPobierzProfilRepository extends DatabaseAccess implements Runnable {
 	private int number;
 	private int idHost;
+	
 
 	public int getNumber() {
 		return number;
