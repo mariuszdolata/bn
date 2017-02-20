@@ -73,8 +73,9 @@ public class ProfilRepository extends MainCrawler implements Runnable {
 		ResultSet unfinishedLetters = null;
 		List<String> profiles = new ArrayList<String>();
 		try {
+			//nastapi³o wyrzucenie order by rand () w celu przyspieszenia.
 			this.rs = getRecords(
-					"SELECT distinct url, status FROM bisnode_pl.indexbisnode where status is null order by rand() limit 1;",
+					"SELECT distinct url, status FROM bisnode_pl.indexbisnode where status is null  limit 1;",
 					rs, stmt);
 			while (rs.next()) {
 				profiles.add(rs.getString("url"));

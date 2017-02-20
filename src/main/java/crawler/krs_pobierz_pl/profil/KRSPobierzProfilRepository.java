@@ -3,12 +3,11 @@ package crawler.krs_pobierz_pl.profil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
-
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import crawler.api.DatabaseAccess;
 
@@ -52,10 +51,22 @@ public class KRSPobierzProfilRepository extends DatabaseAccess implements Runnab
 				do {
 					listToScrape.clear();
 					// Pobieranie po 10 elementow
+//					int maxId=622786;
+					int maxId=0;
+					int setMaxResults=0;
+					try{
+						maxId=Integer.parseInt(this.getProperties().getProperty("maxId"));
+						setMaxResults=Integer.parseInt(this.getProperties().getProperty("setMaxResults"));
+					}catch(Exception e){
+						logger.error("Brak property o id maxId w pliku z wlasciwosciami");
+					}
+						
+					Random generator = new Random();
+					int idGen = generator.nextInt(maxId);
 					TypedQuery<KRSProfilIndex> q = em
-							.createQuery("SELECT i FROM KRSProfilIndex i WHERE status is null order by rand()",
+							.createQuery("SELECT i FROM KRSProfilIndex i WHERE status is null and id > "+idGen,
 									KRSProfilIndex.class)
-							.setMaxResults(20);
+							.setMaxResults(setMaxResults);
 					listToScrape = q.getResultList();
 					for (KRSProfilIndex i : listToScrape) {
 						System.gc();

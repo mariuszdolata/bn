@@ -13,7 +13,7 @@
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
 			<property name="hibernate.connection.password" value="krspobierz" />
 			<property name="hibernate.connection.url"
-				value="jdbc:mysql://localhost:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT" />
+				value="jdbc:mysql://81.2.234.23:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT" />
 
 			<property name="hibernate.connection.username" value="krspobierz" />
 			<property name="hibernate.default_schema" value="krs_pobierz_pl_profil" />
